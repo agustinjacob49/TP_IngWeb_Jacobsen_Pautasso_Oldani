@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" type="text/css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <title>Registrar persona</title>
+</head>
+<body>
+
+    <div class="sidenav">
+         <div class="login-main-text">
+            <h1>Organizat</h1>
+             <h2>Página de ingreso</h2>
+            <p>Registrate</p>
+         </div>
+      </div>
+      <div class="main">
+         <div class="col-md-6 col-sm-12">
+            <div class="login-form">
+               <form>
+                  <div class="form-group">
+                     <label>Usuario</label>
+                     <input type="text" class="form-control" placeholder="Nombre de usuario">
+                  </div>
+                  <div class="form-group">
+                     <label>Contraseña</label>
+                     <input type="password" class="form-control" placeholder="********">
+                  </div>
+                  <button type="submit" class="btn btn-black">Ingresar</button>
+                  <button type="submit" class="btn btn-secondary">Registrarse</button>
+                   <div class="float-right">
+                       <a href="{% url 'home' %}">
+                           <button type="button" class="btn btn-warning">Atrás</button>
+                       </a>
+                   </div>
+               </form>
+            </div>
+         </div>
+      </div>
+</body>
+</html>
