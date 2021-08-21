@@ -8,7 +8,18 @@
 <body>
     {% include "header.html" %}
     <div class="container">
-        <h1>Hola mundo</h1>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="notification {{message.tags}}">
+                    {{message}}!
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if request.user.is_active %}
+            <h1>Hola {{request.user.username}}</h1>
+        {% else %}
+            <h1>Pagina principal</h1>
+        {% endif %}
     </div>
 
 
