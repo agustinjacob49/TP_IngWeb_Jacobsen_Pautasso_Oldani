@@ -7,41 +7,41 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" type="text/css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-    <title>Ingresar al sitio</title>
+    <title>Registrar persona</title>
 </head>
 <body>
 
     <div class="sidenav">
          <div class="login-main-text">
             <h1>Organizat</h1>
-             <h2>Página de ingreso</h2>
+             <h2>Página de registro</h2>
          </div>
       </div>
       <div class="main">
          <div class="col-md-6 col-sm-12">
             <div class="login-form">
-               <form class="form" method="post">
-                  {% csrf_token %}
-                  <!--<div class="form-group">
+               <!--<form>
+                  <div class="form-group">
                      <label>Usuario</label>
                      <input type="text" class="form-control" placeholder="Nombre de usuario">
                   </div>
                   <div class="form-group">
                      <label>Contraseña</label>
                      <input type="password" class="form-control" placeholder="********">
-                  </div>-->
-                  {{form.as_p}}
-                  <button type="submit" class="btn btn-black">Ingresar</button>
-               </form>
-                  <a href="{% url 'register' %}">
+                  </div>
+                  
                      <button type="button" class="btn btn-secondary">Registrarse</button>
-                  </a>
                    <div class="float-right">
                        <a href="{% url 'home' %}">
                            <button type="button" class="btn btn-warning">Atrás</button>
                        </a>
                    </div>
-               
+               </form>-->
+            <form class="form" method="post">
+                {% csrf_token %}
+                {{form.as_p}}
+                <button type="submit" id="submit">Registrarse</button>
+            </form>
             </div>
          </div>
       </div>
