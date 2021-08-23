@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
 </head>
 <body>
 
@@ -29,9 +30,18 @@
                   <a class="nav-link" href="{% url 'login' %}">Ingresar</a>
                 </li>
               {% endif %}
-              <li class="nav-item">
+              <li class="nav-item-right">
                 <a class="nav-link" href="{% url 'private_page' %}">Solo usuarios registrados</a>
               </li>
+              {% if request.user.is_staff %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'register_admin' %}">Registrar usuario administrador</a>
+                </li>
+              {% endif %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="admin/">Administrador Django</a>
+                  </li>
+
           </ul>
         </div>
       </div>
