@@ -7,16 +7,16 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" type="text/css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-    <title>Ingresar al sitio</title>
+    <title>Registrar persona</title>
 </head>
 <body>
 
     <div class="sidenav">
          <div class="login-main-text">
             <h1>Organizat</h1>
-             <h3>Página de ingreso</h3>
+             <h3>Página de registro</h3>
              <div class="mt-3 pt-3">
-                   <a href="{% url 'home' %}">
+                   <a href="{% url 'login' %}">
                        <button type="button" class="btn btn-warning">Atrás</button>
                    </a>
              </div>
@@ -26,23 +26,35 @@
          <div class="col-md-6 col-sm-12">
             <div class="login-form">
                <form class="form" method="post">
-                  {% csrf_token %}
+                    {% csrf_token %}
                   <div class="form-group">
                      <label style="color: black;">Usuario</label>
                      {{ form.username }}
                   </div>
                   <div class="form-group">
-                     <label style="color: black;">Contraseña</label>
-                     {{ form.password }}
+                     <label style="color: black;">Email</label>
+                     {{ form.email }}
                   </div>
-                  <a href="{% url 'register' %}">
-                     <button type="button" class="btn btn-secondary">Registrarse</button>
-                  </a>
-                  <button type="submit" class="btn btn-black float-right">Ingresar</button>
+                  <div class="form-group">
+                     <label style="color: black;">Contraseña</label>
+                     {{ form.password1 }}
+                  </div>
+                  <div class="form-group">
+                     <label style="color: black;">Confirmar contraseña</label>
+                     {{ form.password2 }}
+                  </div>
+                   <div class="float-right">
+                        <button type="submit" id="submit" class="btn btn-black">Registrarse</button>
+                   </div>
                </form>
-
-
-               
+            <!--<form class="form" method="post">
+                {% csrf_token %}
+                {{form.as_p}}
+                <button type="submit" id="submit">Registrarse</button>
+            </form>
+                <a href="{% url 'login' %}">
+                    <button type="button" class="btn btn-warning">Atrás</button>
+                </a>-->
             </div>
          </div>
       </div>

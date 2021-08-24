@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" type="text/css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <title>Logout</title>
+</head>
+<body>
+
+    <div class="sidenav">
+         <div class="login-main-text">
+            <h1>Organizat</h1>
+         </div>
+      </div>
+      <div class="main">
+         <div class="col-md-6 col-sm-12">
+            <div class="login-form">
+               <h1>Te has deslogueado.<h1>
+               <a href="{% url 'home' %}">
+                    <button type="button" class="btn btn-warning">Ir al inicio</button>
+                </a>
+            </div>
+         </div>
+      </div>
+</body>
+</html>

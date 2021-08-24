@@ -1,0 +1,1 @@
+﻿web: cd organizapp && gunicorn organizapp.wsgi
