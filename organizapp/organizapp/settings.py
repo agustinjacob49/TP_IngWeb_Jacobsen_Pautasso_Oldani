@@ -129,6 +129,15 @@ STATICFILES_DIRS = [
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 
+# Para envio de mails
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'no.reply.organizat@gmail.com'
+EMAIL_HOST_PASSWORD = 'NicoJoacoAgu.23.2021'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'no.reply.organizat@gmail.com'
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

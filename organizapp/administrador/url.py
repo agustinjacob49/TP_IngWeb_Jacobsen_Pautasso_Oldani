@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 from .views import *
 from django.contrib.auth.views import LoginView, LogoutView
@@ -7,7 +8,8 @@ urlpatterns = [
     path('', home, name="home"),
     path('login/', LoginView.as_view(template_name='login.html'), name="login"),
     path('logout/', LogoutView.as_view(template_name='logout.html'), name="logout"),
-    path('register/', register, name="register"),
-    path('private-page/', login_required(privatePage), name="private_page")
+    path('register/', register_user, name="register"),
+    path('private-page/', login_required(privatePage), name="private_page"),
+    path('accounts/confirm/<str:activation_key>/', register_confirm, name="activation"),
 ] 
 #+ statics(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
