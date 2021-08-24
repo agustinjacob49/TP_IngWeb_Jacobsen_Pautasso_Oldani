@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+{% load static %}
 <head>
     <meta charset="UTF-8">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" type="text/css">
 </head>
 <body>
 
-<div class="container-fluid">
+<div class="container-fluid" id="cover_page">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Organizat</a>
@@ -39,7 +41,7 @@
                 </li>
               {% endif %}
                   <li class="nav-item">
-                    <a class="nav-link" href="admin/">Administrador Django</a>
+                    <a class="nav-link" href="admin/">Administrador</a>
                   </li>
 
           </ul>

@@ -73,3 +73,23 @@ body {
     background-color: #000 !important;
     color: #fff;
 }
+
+label{
+   font-weight: 500;
+   font-size: 1rem;
+   display: block;
+   color: white;
+}
+
+input{
+    display: block;
+    width: 100%;
+}
+
+#cover_page {
+  background-color: #ffe836 !important;
+}
+
+nav.navbar.navbar-expand-lg.navbar-light.bg-light {
+  background-color: #ffe836 !important;
+}
