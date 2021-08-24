@@ -51,7 +51,7 @@ def register_user(request):
 
             # Enviar un email de confirmación
             email_subject = 'Confirmacion de cuenta Organizat'
-            email_body = "Hola %s, Gracias por registrarte. Para activar tu cuenta da clíck en este link en menos de 24 horas: http://127.0.0.1:8000/accounts/confirm/%s" % (username, activation_key)
+            email_body = "Hola %s, Gracias por registrarte. Para activar tu cuenta da clíck en este link en menos de 24 horas: http://organizat.herokuapp.com/accounts/confirm/%s" % (username, activation_key)
 
             send_mail(email_subject, email_body, 'myemail@example.com',
                 [email], fail_silently=False)
