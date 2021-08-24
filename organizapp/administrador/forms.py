@@ -15,7 +15,6 @@ class UserRegisterForm(UserCreationForm):
 
     # modificamos el método save() así podemos definir  user.is_active a False la primera vez que se registra
     def save(self, commit=True):
-        print("estas en el save")
         user = super(UserRegisterForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
         if commit:
