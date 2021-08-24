@@ -8,16 +8,55 @@
     <div class="container">
         {% if messages %}
             {% for message in messages %}
-                <div class="notification {{message.tags}}">
-                    {{message}}!
+                <div class="{% if message.tags == 'error' %}bg-danger{% else %}bg-success {% endif %} text-white alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+                    {{message}}
                 </div>
             {% endfor %}
         {% endif %}
-        {% if request.user.is_active %}
-            <h1>Hola {{request.user.username}}</h1>
+        {% if not request.user.is_anonymous %}
+            {% if request.user.is_active %}
+                <h1>Bienvenido {{request.user.username}}</h1>
+            {% else %}
+                <h1>Aún no has activado tu cuenta, revisa tu casilla de correos!</h1>
+            {% endif %}
         {% else %}
-            <h1>Pagina principal</h1>
+            <h1>Página principal</h1>
         {% endif %}
+        <div class="container border border-white py-3 my-3">
+            <p class="h5">Usuarios registrados</p>
+            <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+                <table class="table table-striped table-hover">
+                    {% if users %}
+                    <thead>
+                    <tr>
+                        <th>Nombre de usuario</th>
+                        <th>Última entrada</th>
+                        <th>Estado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{user.user.username}}</td>
+                            <td>{{user.user.last_login|date:'d/m/Y - H:i'}}</td>
+                            {% if user.user.is_active %}
+                                <td><i class="material-icons" style="font-size:20px;color:green">check_box</i></td>
+                            {% else %}
+                                <td><i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    {% else %}
+                    <thead>
+                        <tr>
+                            <th>No existen usuarios registrados</th>
+                        </tr>
+                    </thead>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
     </div>
 
 </body>
