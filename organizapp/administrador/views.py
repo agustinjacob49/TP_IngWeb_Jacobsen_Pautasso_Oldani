@@ -69,7 +69,7 @@ def register_user(request):
 def register_confirm(request, activation_key):
     # Verifica que el usuario ya está logeado
     if request.user and request.user.is_authenticated:
-        HttpResponseRedirect('home')
+        redirect('home.html')
 
     # Verifica que el token de activación sea válido y sino retorna un 404
     user_profile = UserProfile.objects.get(activation_key=activation_key)

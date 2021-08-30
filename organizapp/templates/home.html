@@ -22,6 +22,7 @@
         {% else %}
             <h1>Página principal</h1>
         {% endif %}
+        {% if request.user.is_superuser %}
         <div class="container border border-white py-3 my-3">
             <p class="h5">Usuarios registrados</p>
             <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
@@ -55,6 +56,25 @@
                     </thead>
                     {% endif %}
                 </table>
+            </div>
+        </div>
+        {% endif %}
+        <div class="container border border-white py-3 my-3">
+            <div class="row">
+                <div class="col-12 offset-2 offset-md-2 col-md-4 py-3 my-3">
+                    <a href="#">
+                        <button type="button" class="btn btn-primary">
+                            Crear evento
+                        </button>
+                    </a>
+                </div>
+                <div class="col-12 offset-2 offset-md-2 col-md-4 py-3 my-3">
+                    <a href="#">
+                        <button type="button" class="btn btn-primary">
+                            Ingresar link
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
