@@ -138,7 +138,7 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'no.reply.organizat@gmail.com'
 
 #para saber si se esta corriendo local o en heroku y asi sacar email por consola o por casilla
-if not os.environ("RUNNING_INSIDE_HEROKU", False):
+if not os.environ.get('RUNNING_INSIDE_HEROKU', False):
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
