@@ -132,10 +132,14 @@ LOGIN_URL = 'login'
 # Para envio de mails
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'no.reply.organizat@gmail.com'
-EMAIL_HOST_PASSWORD = 'NicoJoacoAgu.23.2021'
+EMAIL_HOST_PASSWORD = os.getenv('DJANGO_EMAIL_HOST_PASSWORD','')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'no.reply.organizat@gmail.com'
+
+#para saber si se esta corriendo local o en heroku y asi sacar email por consola o por casilla
+if not os.environ("RUNNING_INSIDE_HEROKU", False):
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 # Default primary key field type
