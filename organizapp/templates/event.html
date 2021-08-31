@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="{% if message.tags == 'error' %}bg-danger{% else %}bg-success {% endif %} text-white alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <h1>Evento: {{event.name}}</h1>
+    <h2>Organizador: {{event.owner}}</h2>
+    <h3>Link para compartir: event/{{event.event_link}}</h3>
+
+    <a href="{% url 'home' %}">
+           <button type="button" class="btn btn-warning">Ir al inicio</button>
+       </a>
+</div>
+
+{% endblock %}

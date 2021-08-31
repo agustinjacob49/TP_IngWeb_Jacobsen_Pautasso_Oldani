@@ -1,31 +1,25 @@
-import datetime
-import hashlib
-from random import random
-
-from django.contrib.messages import success
-from django.shortcuts import render, redirect
-from django.template.context_processors import csrf
-from django.views.generic import (TemplateView)
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.shortcuts import render
-from .forms import UserRegisterForm
 import secrets
 from django.contrib import messages
 
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
-
 from django.template.context_processors import csrf
+from django.views.generic import DetailView
+
 from .forms import *
 from .models import *
-from django.template import RequestContext
 from django.core.mail import send_mail
-import hashlib, datetime, random
+import datetime
 from django.utils import timezone
 
+# import ipdb; ipdb.set_trace(); para debuguear, n->avanzo, c->hasta el final
 # Create your views here.
 def home(request):
-    users = UserProfile.objects.all()
-    return render(request, 'home.html', {'users': users})
+    users = User.objects.all()
+    events = Event.objects.all()
+    return render(request, 'home.html', {'users': users,
+                                         'events': events})
 
 
 def register_user(request):
@@ -90,3 +84,32 @@ def register_confirm(request, activation_key):
 
 def privatePage(request):
     return render(request, 'page-private.html')
+
+
+def AddEvent(request):
+    if request.method == "POST":
+        form = EventForm(request.POST, request.FILES)
+        if form.is_valid():
+            event_instance = form.save(commit=False)
+            """ le paso el usuario que creo el evento y genero un token para el link"""
+            event_instance.owner_id = request.user.id
+            event_instance.event_link = secrets.token_hex(30)
+            event_instance.save()
+            messages.success(request, ('Evento creado con exito!'))
+
+            return HttpResponseRedirect(reverse('event', kwargs={'token': event_instance.event_link}))
+        else:
+            messages.error(request, 'Hay errores en el formulario')
+
+    form = EventForm()
+    return render(request, 'new-event.html', {'form': form})
+
+
+def EventView(request, token):
+    event = Event.objects.get(event_link=token)
+    return render(request, 'event.html', {'event': event})
+
+
+def Profile(request, pk):
+    invitations = Invitation.objects.filter(user_id=pk)
+    return render(request, 'profile.html', {'invitations': invitations})

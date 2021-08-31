@@ -93,3 +93,15 @@ input{
 nav.navbar.navbar-expand-lg.navbar-light.bg-light {
   background-color: #ffe836 !important;
 }
+
+#link {
+    margin-top: 4px;
+}
+
+#inputLink {
+    display: none;
+}
+
+#link input{
+    background-color: #f0f0f0;
+}

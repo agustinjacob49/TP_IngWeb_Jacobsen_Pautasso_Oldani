@@ -11,5 +11,10 @@ urlpatterns = [
     path('register/', register_user, name="register"),
     path('private-page/', login_required(privatePage), name="private_page"),
     path('accounts/confirm/<str:activation_key>/', register_confirm, name="activation"),
-] 
+
+    path('profile/<int:pk>', login_required(Profile), name="profile"),
+
+    path('add-event/', login_required(AddEvent), name="add_event"),
+    path('event/<str:token>/', login_required(EventView), name="event"),
+]
 #+ statics(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

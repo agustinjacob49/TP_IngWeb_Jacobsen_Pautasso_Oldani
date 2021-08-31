@@ -32,18 +32,24 @@
                     <tr>
                         <th>Nombre de usuario</th>
                         <th>Última entrada</th>
-                        <th>Estado</th>
+                        <th class="text-center">Permisos de administrador</th>
+                        <th class="text-center">Estado</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for user in users %}
                         <tr>
-                            <td>{{user.user.username}}</td>
-                            <td>{{user.user.last_login|date:'d/m/Y - H:i'}}</td>
-                            {% if user.user.is_active %}
-                                <td><i class="material-icons" style="font-size:20px;color:green">check_box</i></td>
+                            <td>{{user.username}}</td>
+                            <td>{{user.last_login|date:'d/m/Y - H:i'}}</td>
+                            {% if user.is_superuser %}
+                                <td class="text-center"><i class="material-icons" style="font-size:20px;color:green">check_box</i></td>
                             {% else %}
-                                <td><i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i></td>
+                                <td class="text-center"><i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i></td>
+                            {% endif %}
+                            {% if user.is_active %}
+                                <td class="text-center"><i class="material-icons" style="font-size:20px;color:green">check_box</i></td>
+                            {% else %}
+                                <td class="text-center"><i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i></td>
                             {% endif %}
                         </tr>
                     {% endfor %}
@@ -62,21 +68,74 @@
         <div class="container border border-white py-3 my-3">
             <div class="row">
                 <div class="col-12 offset-2 offset-md-2 col-md-4 py-3 my-3">
-                    <a href="#">
+                    <a href="{% url 'add_event' %}">
                         <button type="button" class="btn btn-primary">
                             Crear evento
                         </button>
                     </a>
                 </div>
                 <div class="col-12 offset-2 offset-md-2 col-md-4 py-3 my-3">
-                    <a href="#">
+                    <a href="#" onclick="showInputLink()">
                         <button type="button" class="btn btn-primary">
                             Ingresar link
                         </button>
                     </a>
                 </div>
             </div>
+            <div id="inputLink" style="display: none">
+                <div class="row">
+                    <div class="col-12 col-md-10" id="link">
+                        <input type="text" id="event_link">
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <a href="#" class="text-decoration-none btn btn-primary" onclick="goEvent()">
+                            Ir al evento!
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
+        {% if request.user.is_superuser %}
+        <div class="container border border-white py-3 my-3">
+            <p class="h5">Eventos registrados</p>
+            <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+                <table class="table table-striped table-hover">
+                    {% if events %}
+                    <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Organizador</th>
+                        <th>Visibilidad</th>
+                        <th class="text-center">Cantidad máx de invitados</th>
+                        <th class="text-center">Ir al evento</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for event in events %}
+                        <tr>
+                            <td>{{event.name}}</td>
+                            <td>{{event.owner}}</td>
+                            <td>{{event.visibility}}</td>
+                            <td class="text-center">{{event.max_guests}}</td>
+                            <td class="text-center">
+                                <a class="text-decoration-none text-black" href="{% url 'event' event.event_link %}">
+                                    <i class="material-icons" style="font-size:20px">arrow_forward</i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    {% else %}
+                    <thead>
+                        <tr>
+                            <th>No existen eventos registrados</th>
+                        </tr>
+                    </thead>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
 </body>

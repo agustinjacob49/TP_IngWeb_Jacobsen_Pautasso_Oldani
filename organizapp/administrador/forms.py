@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Event
+from datetime import date
 
 
 class UserRegisterForm(UserCreationForm):
@@ -31,3 +33,29 @@ class UserRegisterForm(UserCreationForm):
         except User.DoesNotExist:
             return email
         raise forms.ValidationError('email duplicado')
+
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ['name', 'description', 'date_event_start', 'date_event_end',
+                  'location', 'state', 'max_guests', 'visibility']
+
+        widgets = {'date_event_start': forms.DateInput(
+                    format=('%Y-%m-%dT%H:%M'),
+                    attrs={'type': 'datetime-local'
+                           }),
+                    'date_event_end': forms.DateInput(
+                    format=('%Y-%m-%dT%H:%M'),
+                    attrs={'type': 'datetime-local'
+                           })
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+
+        self.fields["date_event_start"].initial = date.today()
+        self.fields["date_event_end"].initial = date.today()
+
+        #self.fields["date_event_start"].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
+        #self.fields["date_event_end"].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
