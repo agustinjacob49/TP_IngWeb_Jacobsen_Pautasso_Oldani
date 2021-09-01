@@ -12,8 +12,87 @@
     {% endif %}
     <h1>Evento: {{event.name}}</h1>
     <h2>Organizador: {{event.owner}}</h2>
-    <!--<h3>Link para compartir: https://organizat.herokuapp.com/event/{{event.event_link}}</h3>-->
-    <h5>Link para compartir: /event/{{event.event_link}}</h5>
+    <h5>Link para compartir: <a href="#">https://organizat.herokuapp.com/event/{{event.event_link}}</a></h5>
+
+    <div class="container py-2 my-2">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <leyend>Invitados</leyend>
+                <table class="table table-striped table-hover">
+                    {% if event.list_invitation %}
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th class="text-center">Estado de invitación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for invitation in event.list_invitation %}
+                            <tr>
+                                <td>{{invitation.user.username}}</td>
+                                {% if invitation.accepted_event %}
+                                    <td class="text-center"><i class="material-icons" style="font-size:20px;color:green">check_box</i></td>
+                                {% else %}
+                                    <td class="text-center"><i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    {% else %}
+                        <thead>
+                            <tr>
+                                <th>Aun no hay invitados</th>
+                            </tr>
+                        </thead>
+                    {% endif %}
+                </table>
+            </div>
+            <div class="col-12 col-md-6">
+                <leyend>Tareas</leyend>
+                <table class="table table-striped table-hover">
+                    {% if event.list_invitation %}
+                        <thead>
+                            <tr>
+                                <th>Detalle</th>
+                                <th class="text-center">Libre</th>
+                                <th class="text-center">En desarrollo</th>
+                                <th class="text-center">Listo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for invitation in event.list_invitation %}
+                            <tr>
+                                <td>{{invitation.user.username}}</td>
+                                {% if invitation.accepted_event %}
+                                    <td class="text-center"><i class="material-icons" style="font-size:20px;color:green">check_box</i></td>
+                                {% else %}
+                                    <td class="text-center"><i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i></td>
+                                {% endif %}
+                                {% if invitation.accepted_event %}
+                                    <td class="text-center"><i class="material-icons" style="font-size:20px;color:green">check_box</i></td>
+                                {% else %}
+                                    <td class="text-center"><i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i></td>
+                                {% endif %}
+                                {% if invitation.accepted_event %}
+                                    <td class="text-center"><i class="material-icons" style="font-size:20px;color:green">check_box</i></td>
+                                {% else %}
+                                    <td class="text-center"><i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    {% else %}
+                        <thead>
+                            <tr>
+                                <th>Aun no hay invitados</th>
+                            </tr>
+                        </thead>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+
 
     <a href="{% url 'home' %}">
            <button type="button" class="btn btn-warning">Ir al inicio</button>

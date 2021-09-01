@@ -18,15 +18,14 @@ from django.utils import timezone
 def home(request):
     # limito los usuarios y eventos a solo 10, proximamente hacer una vista con todos los eventos
     # y todas los usuarios
-    users = User.objects.all()[0:10]
-    events = Event.objects.all()[0:10]
+    users = User.objects.all().order_by('-id')[0:10]
+    events = Event.objects.all().order_by('-id')[0:10]
 
     # Si existe un link
     if request.GET.get('event_link_name'):
         token = request.GET.get('event_link_name')
         print(request.GET.get('event_link_name'))
-        #token = token[38:]
-        token = token[7:]
+        token = token[38:]
         print(token)
         event = Event.objects.get(event_link=token)
         if not Invitation.objects.filter(user=request.user, event=event).exists():
@@ -111,6 +110,11 @@ def AddEvent(request):
             event_instance.owner_id = request.user.id
             event_instance.event_link = secrets.token_hex(30)
             event_instance.save()
+
+            """ Creo la invitacion del organizador """
+            new_invitation = Invitation.objects.create(user=request.user, event=event_instance, accepted_event = True)
+            new_invitation.save()
+
             messages.success(request, ('Evento creado con exito!'))
 
             return HttpResponseRedirect(reverse('event', kwargs={'token': event_instance.event_link}))
@@ -124,6 +128,32 @@ def AddEvent(request):
 def EventView(request, token):
     event = Event.objects.get(event_link=token)
     return render(request, 'event.html', {'event': event})
+
+
+def DeleteEvent(request, token):
+    event = Event.objects.get(event_link=token)
+    event.delete()
+    messages.success(request, "Evento borrado con éxito")
+    return redirect('home')
+
+
+# Desde el perfil, clickeando sobre los iconos de estado de aceptacion puedo darle de baja o alta a la invitacion
+def EventDown(request, pk, token):
+    event = Event.objects.get(event_link=token)
+    invitation = Invitation.objects.get(user_id=pk, event_id=event.id)
+    invitation.accepted_event = False
+    invitation.save()
+    invitations = Invitation.objects.filter(user_id=pk)
+    return render(request, 'profile.html', {'invitations': invitations})
+
+
+def EventUp(request, pk, token):
+    event = Event.objects.get(event_link=token)
+    invitation = Invitation.objects.get(user_id=pk, event_id=event.id)
+    invitation.accepted_event = True
+    invitation.save()
+    invitations = Invitation.objects.filter(user_id=pk)
+    return render(request, 'profile.html', {'invitations': invitations})
 
 
 def Profile(request, pk):

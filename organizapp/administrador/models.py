@@ -47,6 +47,10 @@ class Event(models.Model):
     max_guests = models.IntegerField(verbose_name='Capacidad máxima de invitados')
     visibility = models.CharField(max_length=14, choices=VISIBILITIES, verbose_name='Visibilidad')
 
+    @property
+    def list_invitation(self):
+        return Invitation.objects.filter(event=self)
+
     def __str__(self):
         return self.name
 
@@ -61,7 +65,7 @@ class Invitation(models.Model):
     accepted_event = models.BooleanField(default=False, verbose_name="Aceptado")
 
     def __str__(self):
-        return self.event.name + ' - ' + self.user.user.username
+        return self.event.name + ' - ' + self.user.username
 
     class Meta:
         verbose_name = 'Invitacion'

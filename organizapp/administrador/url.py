@@ -14,7 +14,10 @@ urlpatterns = [
     path('profile/<int:pk>/', login_required(Profile), name="profile"),
 
     path('add-event/', login_required(AddEvent), name="add_event"),
+    path('delete-event/<str:token>/', login_required(DeleteEvent), name="delete_event"),
     path('event/<str:token>/', login_required(EventView), name="event"),
     path('event/<int:pk>/<str:link>/', login_required(CreateInvitationByLink), name="event_by_link"),
+    path('event-down/<int:pk>/<str:token>/', login_required(EventDown), name="event_down"),
+    path('event-up/<int:pk>/<str:token>/', login_required(EventUp), name="event_up"),
 ]
 #+ statics(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -21,7 +21,7 @@
                     <tr>
                         <th>Título</th>
                         <th>Organizador</th>
-                        <th>Aceptado</th>
+                        <th class="text-center">Aceptado</th>
                         <th class="text-center">Cantidad máx de invitados</th>
                         <th class="text-center">Ir al evento</th>
                     </tr>
@@ -32,9 +32,17 @@
                             <td>{{invitation.event.name}}</td>
                             <td>{{invitation.user.username}}</td>
                             {% if invitation.accepted_event %}
-                                <td class="text-center"><i class="material-icons" style="font-size:20px;color:green">check_box</i></td>
+                                <td class="text-center">
+                                    <a class="text-decoration-none text-black" href="{% url 'event_down' request.user.id invitation.event.event_link %}">
+                                        <i class="material-icons" style="font-size:20px;color:green">check_box</i>
+                                    </a>
+                                </td>
                             {% else %}
-                                <td class="text-center"><i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i></td>
+                                <td class="text-center">
+                                    <a class="text-decoration-none text-black" href="{% url 'event_up' request.user.id invitation.event.event_link %}">
+                                        <i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i>
+                                    </a>
+                                </td>
                             {% endif %}
                             <td class="text-center">{{invitation.event.max_guests}}</td>
                             <td class="text-center">

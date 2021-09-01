@@ -19,6 +19,6 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('', include(('administrador.url'))),
 ]
