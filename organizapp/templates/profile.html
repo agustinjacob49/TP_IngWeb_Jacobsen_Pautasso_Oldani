@@ -29,14 +29,14 @@
                     <tbody>
                     {% for invitation in invitations %}
                         <tr>
-                            <td>{{invitation.name}}</td>
-                            <td>{{invitation.owner}}</td>
+                            <td>{{invitation.event.name}}</td>
+                            <td>{{invitation.user.username}}</td>
                             {% if invitation.accepted_event %}
                                 <td class="text-center"><i class="material-icons" style="font-size:20px;color:green">check_box</i></td>
                             {% else %}
                                 <td class="text-center"><i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i></td>
                             {% endif %}
-                            <td class="text-center">{{invitation.max_guests}}</td>
+                            <td class="text-center">{{invitation.event.max_guests}}</td>
                             <td class="text-center">
                                 <a class="text-decoration-none text-black" href="{% url 'event' invitation.event.event_link %}">
                                     <i class="material-icons" style="font-size:20px">arrow_forward</i>

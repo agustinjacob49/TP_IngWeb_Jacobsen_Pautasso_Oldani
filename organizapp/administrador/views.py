@@ -16,8 +16,28 @@ from django.utils import timezone
 # import ipdb; ipdb.set_trace(); para debuguear, n->avanzo, c->hasta el final
 # Create your views here.
 def home(request):
-    users = User.objects.all()
-    events = Event.objects.all()
+    # limito los usuarios y eventos a solo 10, proximamente hacer una vista con todos los eventos
+    # y todas los usuarios
+    users = User.objects.all()[0:10]
+    events = Event.objects.all()[0:10]
+
+    # Si existe un link
+    if request.GET.get('event_link_name'):
+        token = request.GET.get('event_link_name')
+        print(request.GET.get('event_link_name'))
+        #token = token[38:]
+        token = token[7:]
+        print(token)
+        event = Event.objects.get(event_link=token)
+        if not Invitation.objects.filter(user=request.user, event=event).exists():
+            new_invitation = Invitation.objects.create(user=request.user, event=event, accepted_event=True)
+            new_invitation.save()
+            messages.success(request, "Te has unido a este evento con éxito.")
+            return render(request, 'event.html', {'event': event})
+        else:
+            messages.error(request, "Ya estas unido a este evento")
+            return render(request, 'event.html', {'event': event})
+
     return render(request, 'home.html', {'users': users,
                                          'events': events})
 
@@ -82,10 +102,6 @@ def register_confirm(request, activation_key):
     return render(request, 'home.html')
 
 
-def privatePage(request):
-    return render(request, 'page-private.html')
-
-
 def AddEvent(request):
     if request.method == "POST":
         form = EventForm(request.POST, request.FILES)
@@ -113,3 +129,11 @@ def EventView(request, token):
 def Profile(request, pk):
     invitations = Invitation.objects.filter(user_id=pk)
     return render(request, 'profile.html', {'invitations': invitations})
+
+
+def CreateInvitationByLink(request, pk, link):
+    new_invitation = Invitation.objects.create(user_id=pk, event_event_link=link)
+    new_invitation.accepted_event = True
+    new_invitation.save()
+    event = Event.objects.get(event_link=link)
+    return render(request, 'event.html', {'event': event})

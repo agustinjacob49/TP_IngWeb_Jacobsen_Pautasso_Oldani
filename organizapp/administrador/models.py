@@ -56,7 +56,7 @@ class Event(models.Model):
 
 
 class Invitation(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name="Integrate")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Integrate")
     event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Evento")
     accepted_event = models.BooleanField(default=False, verbose_name="Aceptado")
 

@@ -12,7 +12,8 @@
     {% endif %}
     <h1>Evento: {{event.name}}</h1>
     <h2>Organizador: {{event.owner}}</h2>
-    <h3>Link para compartir: event/{{event.event_link}}</h3>
+    <!--<h3>Link para compartir: https://organizat.herokuapp.com/event/{{event.event_link}}</h3>-->
+    <h5>Link para compartir: /event/{{event.event_link}}</h5>
 
     <a href="{% url 'home' %}">
            <button type="button" class="btn btn-warning">Ir al inicio</button>
