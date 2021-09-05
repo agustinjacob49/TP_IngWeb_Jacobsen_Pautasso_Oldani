@@ -12,7 +12,16 @@
     {% endif %}
     <h1>Evento: {{event.name}}</h1>
     <h2>Organizador: {{event.owner}}</h2>
-    <h5>Link para compartir: <a href="#">https://organizat.herokuapp.com/event/{{event.event_link}}</a></h5>
+    <h4>Lugar: {{event.location}}</h4>
+    <h4>Máxima cantidad de invitados: {{event.location}}</h4>
+    <h4>Dia y hora del evento: {{event.date_event_start|date:"d/m/Y - H:i"}} hasta {{event.date_event_end|date:"d/m/Y - H:i"}}</h4>
+
+    <h5>Link para compartir:
+        <a href="javascript:getlink();"
+            onclick="alert('URL copiada');"
+            title="Click para copiar">https://organizat.herokuapp.com/event/{{event.event_link}}
+        </a>
+    </h5>
 
     <div class="container py-2 my-2">
         <div class="row">
@@ -48,8 +57,8 @@
                 </table>
             </div>
             <div class="col-12 col-md-6">
-                <leyend>Tareas</leyend>
-                <table class="table table-striped table-hover">
+                <leyend>Tareas (aún no)</leyend>
+                <!--<table class="table table-striped table-hover">
                     {% if event.list_invitation %}
                         <thead>
                             <tr>
@@ -88,15 +97,31 @@
                             </tr>
                         </thead>
                     {% endif %}
-                </table>
+                </table>-->
             </div>
         </div>
     </div>
 
+    {% if event.owner == request.user %}
+    <a href="{% url 'delete_event' event.event_link %}"><button type="button" class="ml-3 btn btn-danger">Borrar evento</button></a>
+    {% endif %}
 
     <a href="{% url 'home' %}">
-           <button type="button" class="btn btn-warning">Ir al inicio</button>
-       </a>
-</div>
+       <button type="button" class="mx-3 btn btn-warning">Ir al inicio</button>
+   </a>
 
+
+
+
+</div>
+<script>
+    function getlink() {
+        var aux = document.createElement("input");
+        aux.setAttribute("value",window.location.href);
+        document.body.appendChild(aux);
+        aux.select();
+        document.execCommand("copy");
+        document.body.removeChild(aux);
+    }
+</script>
 {% endblock %}

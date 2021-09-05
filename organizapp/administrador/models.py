@@ -29,9 +29,8 @@ class UserProfile(models.Model):
 
 
 VISIBILITIES = [
-    ('publico', 'PUBLICO '),
-    ('privado', 'PRIVADO'),
-    ('solo_link', 'SOLO CON LINK')
+    ('publico', 'PÚBLICO '),
+    ('privado', 'PRIVADO')
 ]
 
 
