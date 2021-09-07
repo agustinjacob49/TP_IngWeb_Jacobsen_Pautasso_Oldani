@@ -12,6 +12,7 @@ urlpatterns = [
     path('accounts/confirm/<str:activation_key>/', register_confirm, name="activation"),
 
     path('profile/<int:pk>/', login_required(Profile), name="profile"),
+    path('profile/events/', login_required(event_listing), name="profile_invitations"),
 
     path('add-event/', login_required(AddEvent), name="add_event"),
     path('delete-event/<str:token>/', login_required(DeleteEvent), name="delete_event"),

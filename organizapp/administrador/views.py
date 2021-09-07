@@ -1,3 +1,6 @@
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.shortcuts import render
@@ -24,9 +27,8 @@ def home(request):
     # Si existe un link
     if request.GET.get('event_link_name'):
         token = request.GET.get('event_link_name')
-        print(request.GET.get('event_link_name'))
         token = token[38:]
-        print(token)
+
         event = Event.objects.get(event_link=token)
         if not Invitation.objects.filter(user=request.user, event=event).exists():
             new_invitation = Invitation.objects.create(user=request.user, event=event, accepted_event=True)
@@ -157,8 +159,21 @@ def EventUp(request, pk, token):
 
 
 def Profile(request, pk):
-    invitations = Invitation.objects.filter(user_id=pk)
-    return render(request, 'profile.html', {'invitations': invitations})
+    user = User.objects.get(id=pk)
+    invitations = Invitation.objects.filter(user_id=pk)[:10]
+    return render(request, 'profile.html', {'invitations': invitations,
+                                            'user': user})
+
+
+
+def event_listing(request):
+    event_list = Invitation.objects.filter(user_id=request.user.id)
+    # Con paginator puedo dividir de a 10 registros
+    paginator = Paginator(event_list, 1)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'invitations-by-profile.html', {'page_obj': page_obj,
+                                                            'invitations': paginator.object_list})
 
 
 def CreateInvitationByLink(request, pk, link):
