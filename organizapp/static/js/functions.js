@@ -1,14 +1,15 @@
 function showInputLink(){
-    var x = document.getElementById('inputLink');
-    if (x.style.display == 'none') {
-        x.style.display = 'block';
-    } else {
-        x.style.display = 'none';
-    }
+    let input = document.getElementById('inputLink');
+    input.style.display = input.style.display == 'none' ? 'block' : 'none';
 }
 
 /* redirecciona al evento desde link */
 function goEvent(){
-    var x = document.getElementById('event_link').value;
-    window.location = x;
+    let link = document.getElementById('event_link').value;
+
+    if (link != null && link.length > 0){
+        window.location = link.substring(0,link.length-1);
+    } else {
+        alert("Url invalida");
+    }
 }
