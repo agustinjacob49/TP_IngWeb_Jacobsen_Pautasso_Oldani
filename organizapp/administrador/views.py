@@ -1,31 +1,46 @@
-import datetime
-import hashlib
-from random import random
-
-from django.contrib.messages import success
-from django.shortcuts import render, redirect
-from django.template.context_processors import csrf
-from django.views.generic import (TemplateView)
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView
+from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.shortcuts import render
-from .forms import UserRegisterForm
 import secrets
 from django.contrib import messages
 
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
-
 from django.template.context_processors import csrf
+from django.views.generic import DetailView
+
 from .forms import *
 from .models import *
-from django.template import RequestContext
 from django.core.mail import send_mail
-import hashlib, datetime, random
+import datetime
 from django.utils import timezone
 
+# import ipdb; ipdb.set_trace(); para debuguear, n->avanzo, c->hasta el final
 # Create your views here.
 def home(request):
-    users = UserProfile.objects.all()
-    return render(request, 'home.html', {'users': users})
+    # limito los usuarios y eventos a solo 10, proximamente hacer una vista con todos los eventos
+    # y todas los usuarios
+    users = User.objects.all().order_by('-id')[0:10]
+    events = Event.objects.all().order_by('-id')[0:10]
+
+    # Si existe un link
+    if request.GET.get('event_link_name'):
+        token = request.GET.get('event_link_name')
+        token = token[38:]
+
+        event = Event.objects.get(event_link=token)
+        if not Invitation.objects.filter(user=request.user, event=event).exists():
+            new_invitation = Invitation.objects.create(user=request.user, event=event, accepted_event=True)
+            new_invitation.save()
+            messages.success(request, "Te has unido a este evento con éxito.")
+            return render(request, 'event.html', {'event': event})
+        else:
+            messages.error(request, "Ya estas unido a este evento")
+            return render(request, 'event.html', {'event': event})
+
+    return render(request, 'home.html', {'users': users,
+                                         'events': events})
 
 
 def register_user(request):
@@ -69,7 +84,7 @@ def register_user(request):
 def register_confirm(request, activation_key):
     # Verifica que el usuario ya está logeado
     if request.user and request.user.is_authenticated:
-        HttpResponseRedirect('home')
+        redirect('home.html')
 
     # Verifica que el token de activación sea válido y sino retorna un 404
     user_profile = UserProfile.objects.get(activation_key=activation_key)
@@ -88,5 +103,82 @@ def register_confirm(request, activation_key):
     return render(request, 'home.html')
 
 
-def privatePage(request):
-    return render(request, 'page-private.html')
+def AddEvent(request):
+    if request.method == "POST":
+        form = EventForm(request.POST, request.FILES)
+        if form.is_valid():
+            event_instance = form.save(commit=False)
+            """ le paso el usuario que creo el evento y genero un token para el link"""
+            event_instance.owner_id = request.user.id
+            event_instance.event_link = secrets.token_hex(30)
+            event_instance.save()
+
+            """ Creo la invitacion del organizador """
+            new_invitation = Invitation.objects.create(user=request.user, event=event_instance, accepted_event = True)
+            new_invitation.save()
+
+            messages.success(request, ('Evento creado con exito!'))
+
+            return HttpResponseRedirect(reverse('event', kwargs={'token': event_instance.event_link}))
+        else:
+            messages.error(request, 'Hay errores en el formulario')
+
+    form = EventForm()
+    return render(request, 'new-event.html', {'form': form})
+
+
+def EventView(request, token):
+    event = Event.objects.get(event_link=token)
+    return render(request, 'event.html', {'event': event})
+
+
+def DeleteEvent(request, token):
+    event = Event.objects.get(event_link=token)
+    event.delete()
+    messages.success(request, "Evento borrado con éxito")
+    return redirect('home')
+
+
+# Desde el perfil, clickeando sobre los iconos de estado de aceptacion puedo darle de baja o alta a la invitacion
+def EventDown(request, pk, token):
+    event = Event.objects.get(event_link=token)
+    invitation = Invitation.objects.get(user_id=pk, event_id=event.id)
+    invitation.accepted_event = False
+    invitation.save()
+    invitations = Invitation.objects.filter(user_id=pk)
+    return render(request, 'profile.html', {'invitations': invitations})
+
+
+def EventUp(request, pk, token):
+    event = Event.objects.get(event_link=token)
+    invitation = Invitation.objects.get(user_id=pk, event_id=event.id)
+    invitation.accepted_event = True
+    invitation.save()
+    invitations = Invitation.objects.filter(user_id=pk)
+    return render(request, 'profile.html', {'invitations': invitations})
+
+
+def Profile(request, pk):
+    user = User.objects.get(id=pk)
+    invitations = Invitation.objects.filter(user_id=pk)[:10]
+    return render(request, 'profile.html', {'invitations': invitations,
+                                            'user': user})
+
+
+
+def event_listing(request):
+    event_list = Invitation.objects.filter(user_id=request.user.id)
+    # Con paginator puedo dividir de a 10 registros
+    paginator = Paginator(event_list, 1)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'invitations-by-profile.html', {'page_obj': page_obj,
+                                                            'invitations': paginator.object_list})
+
+
+def CreateInvitationByLink(request, pk, link):
+    new_invitation = Invitation.objects.create(user_id=pk, event_event_link=link)
+    new_invitation.accepted_event = True
+    new_invitation.save()
+    event = Event.objects.get(event_link=link)
+    return render(request, 'event.html', {'event': event})

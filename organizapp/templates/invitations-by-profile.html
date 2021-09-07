@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-3 my-3">
+
+    <div class="container border border-white py-3 my-3">
+            <p class="h5">Todos los eventos</p>
+            <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+                <table class="table table-striped table-hover">
+                    {% if invitations %}
+                    <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Organizador</th>
+                        <th class="text-center">Aceptado</th>
+                        <th class="text-center">Cantidad máx de invitados</th>
+                        <th class="text-center">Ir al evento</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for invitation in invitations %}
+                        <tr>
+                            <td>{{invitation.event.name}}</td>
+                            <td>{{invitation.user.username}}</td>
+                            {% if invitation.accepted_event %}
+                                <td class="text-center">
+                                    <a class="text-decoration-none text-black" href="{% url 'event_down' request.user.id invitation.event.event_link %}">
+                                        <i class="material-icons" style="font-size:20px;color:green">check_box</i>
+                                    </a>
+                                </td>
+                            {% else %}
+                                <td class="text-center">
+                                    <a class="text-decoration-none text-black" href="{% url 'event_up' request.user.id invitation.event.event_link %}">
+                                        <i class="material-icons" style="font-size:20px;color:red">indeterminate_check_box</i>
+                                    </a>
+                                </td>
+                            {% endif %}
+                            <td class="text-center">{{invitation.event.max_guests}}</td>
+                            <td class="text-center">
+                                <a class="text-decoration-none text-black" href="{% url 'event' invitation.event.event_link %}">
+                                    <i class="material-icons" style="font-size:20px">arrow_forward</i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    {% else %}
+                    <thead>
+                        <tr>
+                            <th>No existen invitaciones a eventos registrados</th>
+                        </tr>
+                    </thead>
+                    {% endif %}
+                </table>
+            </div>
+            <!--<hr style="border-color: #000000;">
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1" style="color: #000000;">&laquo; Primera |</a>
+                        <a href="?page={{ page_obj.previous_page_number }}" style="color: #000000;">Anterior |</a>
+                    {% endif %}
+
+                    <span class="current" style="color: #000000;">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" style="color: #000000;">| Siguiente</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}" style="color: #000000;">| Última &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>-->
+        </div>
+
+    <a href="{% url 'profile' request.user.id %}">
+           <button type="button" class="btn btn-warning">Atrás</button>
+       </a>
+</div>
+
+{% endblock %}

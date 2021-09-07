@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Crear evento</h1>
+
+    <form action="{% url 'add_event' %}" method="POST">{% csrf_token %}
+        <label class="text-black">Titulo</label>
+        {{form.name}}
+        <label class="text-black">Descripción</label>
+        {{form.description}}
+        <label class="text-black">Fecha de inicio</label>
+        {{form.date_event_start}}
+        <label class="text-black">Fecha de finalización</label>
+        {{form.date_event_end}}
+        <label class="text-black">Localización</label>
+        {{form.location}}
+        <label class="text-black">Estado</label>
+        {{form.state}}
+        <label class="text-black">Cantidad máxima permitida de invitados</label>
+        {{form.max_guests}}
+        <label class="text-black">Visibilidad</label>
+        {{form.visibility}}
+        <div class="py-2 my-2">
+            <a class="text-decoration-none text-white btn-block"
+               href="">
+                <button type="submit" class="btn btn-block btn-success">Crear</button>
+            </a>
+            <a href="{% url 'home' %}">
+               <button type="button" class="btn btn-warning">Atrás</button>
+           </a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
