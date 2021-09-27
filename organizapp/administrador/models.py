@@ -6,11 +6,15 @@ from datetime import date, datetime
 
 STATES = [
     ('activo', 'ACTIVO'),
-    ('inactivo', 'INACTIVO'),
+    ('finalizado', 'FINALIZADO'),
     ('oculto', 'OCULTO'),
     ('suspendido', 'SUSPENDIDO')
 ]
 
+STATES_USUARIO = [
+    ('activo', 'ACTIVO'),
+    ('oculto', 'OCULTO')
+]
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -42,7 +46,7 @@ class Event(models.Model):
     date_event_end = models.DateTimeField(default=datetime.today(), verbose_name='Fecha de baja del evento')
     location = models.CharField(max_length=255, blank=True, null=False, verbose_name='Ubicación')
     event_link = models.URLField(max_length=200, verbose_name='Link')
-    state = models.CharField(max_length=10, choices=STATES, verbose_name='Estado', null=True)
+    state = models.CharField(max_length=10, choices=STATES_USUARIO, verbose_name='Estado', null=True)
     max_guests = models.IntegerField(verbose_name='Capacidad máxima de invitados')
     visibility = models.CharField(max_length=14, choices=VISIBILITIES, verbose_name='Visibilidad')
 

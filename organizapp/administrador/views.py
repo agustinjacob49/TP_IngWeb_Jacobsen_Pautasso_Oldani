@@ -6,7 +6,6 @@ from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.shortcuts import render
 import secrets
 from django.contrib import messages
-
 from django.template.context_processors import csrf
 from django.views.generic import DetailView
 
@@ -178,6 +177,9 @@ def event_listing(request):
 def CreateInvitationByLink(request, pk, link):
     event = Event.objects.get(event_link=link)
     if len(event.list_invitation) < event.max_guests:
+        print(len(event.list_invitation))
+        print(event.list_invitation)
+        print(event.max_guests)
         new_invitation = Invitation.objects.create(user_id=pk, event_event_link=link)
         new_invitation.accepted_event = True
         new_invitation.save()
