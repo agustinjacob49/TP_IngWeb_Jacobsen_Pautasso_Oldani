@@ -191,3 +191,19 @@ def CreateInvitationByLink(request, pk, link):
     else:
         messages.error(request, 'El evento alcanzó la cantidad máxima de invitados')
         return render(request, 'event.html', {'event': event})
+
+
+def InvitationDown(request, pk, token):
+    invitation = Invitation.objects.get(id=pk)
+    invitation.accepted_event = False
+    invitation.save()
+    event = Event.objects.get(event_link = token)
+    return render(request, 'event.html', {'event': event})
+
+
+def InvitationUp(request, pk, token):
+    invitation = Invitation.objects.get(id=pk)
+    invitation.accepted_event = True
+    invitation.save()
+    event = Event.objects.get(event_link=token)
+    return render(request, 'event.html', {'event': event})

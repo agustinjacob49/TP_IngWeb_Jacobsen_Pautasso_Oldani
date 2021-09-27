@@ -54,6 +54,10 @@ class Event(models.Model):
     def list_invitation(self):
         return Invitation.objects.filter(event=self)
 
+    @property
+    def list_invitation_accepted(self):
+        return Invitation.objects.filter(event=self, accepted_event=True)
+
     def __str__(self):
         return self.name
 
