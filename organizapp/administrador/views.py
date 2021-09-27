@@ -110,15 +110,19 @@ def AddEvent(request):
             """ le paso el usuario que creo el evento y genero un token para el link"""
             event_instance.owner_id = request.user.id
             event_instance.event_link = secrets.token_hex(30)
-            event_instance.save()
+            if event_instance.date_event_start > event_instance.date_event_end:
+                messages.error(request, 'La fecha de inicio del evento no es valida (debe ser anterior a la fecha de finalizacion)')
+                return render(request, 'new-event.html', {'form': form})
+            else:
+                event_instance.save()
 
-            """ Creo la invitacion del organizador """
-            new_invitation = Invitation.objects.create(user=request.user, event=event_instance, accepted_event = True)
-            new_invitation.save()
+                """ Creo la invitacion del organizador """
+                new_invitation = Invitation.objects.create(user=request.user, event=event_instance, accepted_event = True)
+                new_invitation.save()
 
-            messages.success(request, ('Evento creado con exito!'))
+                messages.success(request, ('Evento creado con exito!'))
 
-            return HttpResponseRedirect(reverse('event', kwargs={'token': event_instance.event_link}))
+                return HttpResponseRedirect(reverse('event', kwargs={'token': event_instance.event_link}))
         else:
             messages.error(request, 'Hay errores en el formulario')
 
