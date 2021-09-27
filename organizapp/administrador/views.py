@@ -6,7 +6,6 @@ from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.shortcuts import render
 import secrets
 from django.contrib import messages
-
 from django.template.context_processors import csrf
 from django.views.generic import DetailView
 
@@ -168,7 +167,6 @@ def Profile(request, pk):
     invitations = Invitation.objects.filter(user_id=pk)[:10]
     return render(request, 'profile.html', {'invitations': invitations,
                                             'user': user})
-
 
 
 def event_listing(request):
