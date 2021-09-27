@@ -6,7 +6,6 @@ from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.shortcuts import render
 import secrets
 from django.contrib import messages
-
 from django.template.context_processors import csrf
 from django.views.generic import DetailView
 
@@ -165,7 +164,6 @@ def Profile(request, pk):
                                             'user': user})
 
 
-
 def event_listing(request):
     event_list = Invitation.objects.filter(user_id=request.user.id)
     # Con paginator puedo dividir de a 10 registros
@@ -177,8 +175,15 @@ def event_listing(request):
 
 
 def CreateInvitationByLink(request, pk, link):
-    new_invitation = Invitation.objects.create(user_id=pk, event_event_link=link)
-    new_invitation.accepted_event = True
-    new_invitation.save()
     event = Event.objects.get(event_link=link)
-    return render(request, 'event.html', {'event': event})
+    if len(event.list_invitation) < event.max_guests:
+        print(len(event.list_invitation))
+        print(event.list_invitation)
+        print(event.max_guests)
+        new_invitation = Invitation.objects.create(user_id=pk, event_event_link=link)
+        new_invitation.accepted_event = True
+        new_invitation.save()
+        return render(request, 'event.html', {'event': event})
+    else:
+        messages.error(request, 'El evento alcanzó la cantidad máxima de invitados')
+        return render(request, 'event.html', {'event': event})
