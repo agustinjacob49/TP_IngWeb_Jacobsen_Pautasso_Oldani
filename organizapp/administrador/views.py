@@ -15,6 +15,7 @@ from .models import *
 from django.core.mail import send_mail
 import datetime
 from django.utils import timezone
+from purl import URL
 
 # import ipdb; ipdb.set_trace(); para debuguear, n->avanzo, c->hasta el final
 # Create your views here.
@@ -26,15 +27,19 @@ def home(request):
 
     # Si existe un link
     if request.GET.get('event_link_name'):
-        token = request.GET.get('event_link_name')
-        token = token[38:]
+        token = URL(request.GET.get('event_link_name'))
+        token = token.path_segments()[1]
 
         event = Event.objects.get(event_link=token)
         if not Invitation.objects.filter(user=request.user, event=event).exists():
-            new_invitation = Invitation.objects.create(user=request.user, event=event, accepted_event=True)
-            new_invitation.save()
-            messages.success(request, "Te has unido a este evento con éxito.")
-            return render(request, 'event.html', {'event': event})
+            if len(event.list_invitation) < event.max_guests:
+                new_invitation = Invitation.objects.create(user=request.user, event=event, accepted_event=True)
+                new_invitation.save()
+                messages.success(request, "Te has unido a este evento con éxito.")
+                return render(request, 'event.html', {'event': event})
+            else:
+                messages.error(request, 'El evento alcanzó la cantidad máxima de invitados')
+                return render(request, 'event.html', {'event': event})
         else:
             messages.error(request, "Ya estas unido a este evento")
             return render(request, 'event.html', {'event': event})
@@ -177,8 +182,12 @@ def event_listing(request):
 
 
 def CreateInvitationByLink(request, pk, link):
-    new_invitation = Invitation.objects.create(user_id=pk, event_event_link=link)
-    new_invitation.accepted_event = True
-    new_invitation.save()
     event = Event.objects.get(event_link=link)
-    return render(request, 'event.html', {'event': event})
+    if len(event.list_invitation) < event.max_guests:
+        new_invitation = Invitation.objects.create(user_id=pk, event_event_link=link)
+        new_invitation.accepted_event = True
+        new_invitation.save()
+        return render(request, 'event.html', {'event': event})
+    else:
+        messages.error(request, 'El evento alcanzó la cantidad máxima de invitados')
+        return render(request, 'event.html', {'event': event})
