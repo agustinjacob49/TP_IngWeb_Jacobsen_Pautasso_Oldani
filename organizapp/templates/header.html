@@ -12,15 +12,13 @@
 <div class="container-fluid" id="cover_page">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <div class="navbar-brand" id="logo">Organizat</div>
+        <a class="nav-link active" aria-current="page" href="{% url 'home' %}"><div class="navbar-brand" id="logo">Organizat</div></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
-            </li>
+
               {% if not request.user.is_anonymous %}
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'profile' request.user.id %}">Mi perfil</a>
@@ -33,9 +31,11 @@
                   <a class="nav-link" href="{% url 'login' %}">Ingresar</a>
                 </li>
               {% endif %}
-              <li class="nav-item">
-                <a class="nav-link" href="/admin">Administrador</a>
-              </li>
+              {% if request.user.is_superuser %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="/admin">Panel de administrador</a>
+                  </li>
+              {% endif %}
 
           </ul>
         </div>

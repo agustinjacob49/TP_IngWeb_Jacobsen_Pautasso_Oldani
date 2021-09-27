@@ -4,16 +4,22 @@ from datetime import date, datetime
 
 # Create your models here.
 
-STATES = [
+STATES_EVENTO = [
     ('activo', 'ACTIVO'),
     ('finalizado', 'FINALIZADO'),
     ('oculto', 'OCULTO'),
     ('suspendido', 'SUSPENDIDO')
 ]
 
-STATES_USUARIO = [
+STATES_EVENTO_USUARIO = [
     ('activo', 'ACTIVO'),
     ('oculto', 'OCULTO')
+]
+
+STATES_TAREAS = [
+    ('realizada', 'REALIZADA'),
+    ('porhacer', 'POR HACER'),
+    ('enprogreso', 'EN PROGRESO'),
 ]
 
 class UserProfile(models.Model):
@@ -22,7 +28,7 @@ class UserProfile(models.Model):
     key_expires = models.DateTimeField(default=date.today)
     date_start = models.DateTimeField(default=date.today)
     date_end = models.DateTimeField(null=True, blank=True)
-    state = models.CharField(max_length=10, choices=STATES, verbose_name='Estado', null=True)
+    state = models.CharField(max_length=10, choices=STATES_EVENTO, verbose_name='Estado', null=True)
 
     def __str__(self):
         return self.user.username
@@ -46,13 +52,17 @@ class Event(models.Model):
     date_event_end = models.DateTimeField(default=datetime.today(), verbose_name='Fecha de baja del evento')
     location = models.CharField(max_length=255, blank=True, null=False, verbose_name='Ubicación')
     event_link = models.URLField(max_length=200, verbose_name='Link')
-    state = models.CharField(max_length=10, choices=STATES_USUARIO, verbose_name='Estado', null=True)
+    state = models.CharField(max_length=10, choices=STATES_EVENTO_USUARIO, verbose_name='Estado', null=True)
     max_guests = models.IntegerField(verbose_name='Capacidad máxima de invitados')
     visibility = models.CharField(max_length=14, choices=VISIBILITIES, verbose_name='Visibilidad')
 
     @property
     def list_invitation(self):
         return Invitation.objects.filter(event=self)
+
+    @property
+    def list_invitation_accepted(self):
+        return Invitation.objects.filter(event=self, accepted_event=True)
 
     def __str__(self):
         return self.name
@@ -73,3 +83,17 @@ class Invitation(models.Model):
     class Meta:
         verbose_name = 'Invitacion'
         verbose_name_plural = 'Invitaciones'
+
+class Task(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Integrate")
+    title = models.CharField(max_length=50, blank = False, null = False, verbose_name = 'Titulo')
+    description = models.CharField(max_length=255, blank = False, null = False, verbose_name = 'Descripcion')
+    status = models.CharField(choices = STATES_TAREAS, blank = False, null = False, max_length=11, verbose_name='Estado de la tarea')
+    cost = models.FloatField(default = 0)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Tarea'
+        verbose_name_plural = 'Tareas'

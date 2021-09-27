@@ -31,7 +31,7 @@ def home(request):
 
         event = Event.objects.get(event_link=token)
         if not Invitation.objects.filter(user=request.user, event=event).exists():
-            if len(event.list_invitation) < event.max_guests:
+            if len(event.list_invitation_accepted) < event.max_guests:
                 new_invitation = Invitation.objects.create(user=request.user, event=event, accepted_event=True)
                 new_invitation.save()
                 messages.success(request, "Te has unido a este evento con éxito.")
@@ -115,15 +115,19 @@ def AddEvent(request):
             """ le paso el usuario que creo el evento y genero un token para el link"""
             event_instance.owner_id = request.user.id
             event_instance.event_link = secrets.token_hex(30)
-            event_instance.save()
+            if event_instance.date_event_start > event_instance.date_event_end:
+                messages.error(request, 'La fecha de inicio del evento no es valida (debe ser anterior a la fecha de finalizacion)')
+                return render(request, 'new-event.html', {'form': form})
+            else:
+                event_instance.save()
 
-            """ Creo la invitacion del organizador """
-            new_invitation = Invitation.objects.create(user=request.user, event=event_instance, accepted_event = True)
-            new_invitation.save()
+                """ Creo la invitacion del organizador """
+                new_invitation = Invitation.objects.create(user=request.user, event=event_instance, accepted_event = True)
+                new_invitation.save()
 
-            messages.success(request, ('Evento creado con exito!'))
+                messages.success(request, ('Evento creado con exito!'))
 
-            return HttpResponseRedirect(reverse('event', kwargs={'token': event_instance.event_link}))
+                return HttpResponseRedirect(reverse('event', kwargs={'token': event_instance.event_link}))
         else:
             messages.error(request, 'Hay errores en el formulario')
 
@@ -189,3 +193,17 @@ def CreateInvitationByLink(request, pk, link):
     else:
         messages.error(request, 'El evento alcanzó la cantidad máxima de invitados')
         return render(request, 'event.html', {'event': event})
+
+def InvitationDown(request, pk, token):
+    invitation = Invitation.objects.get(id=pk)
+    invitation.accepted_event = False
+    invitation.save()
+    event = Event.objects.get(event_link = token)
+    return render(request, 'event.html', {'event': event})
+
+def InvitationUp(request, pk, token):
+    invitation = Invitation.objects.get(id=pk)
+    invitation.accepted_event = True
+    invitation.save()
+    event = Event.objects.get(event_link=token)
+    return render(request, 'event.html', {'event': event})
