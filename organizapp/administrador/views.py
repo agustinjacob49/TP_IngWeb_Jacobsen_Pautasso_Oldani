@@ -272,20 +272,25 @@ def AddTask(request,token):
         form = TaskForm(request.POST, request.FILES)
         if form.is_valid():
             task_instance = form.save(commit=False)
-            task_instance.status = 'POR HACER'
+            if task_instance.user:
+                task_instance.status = 'POR HACER ASIGNADA'
+            else:
+                task_instance.status = 'POR HACER NO ASIGNADA'
             task_instance.event = Event.objects.get(event_link = token)
             task_instance.save()
 
             messages.success(request, ('Tarea creada con exito!'))
             
-            user = task_instance.user
-            event = task_instance.event
-            
-            email_subject = 'Te han asignado una tarea en un evento!'
-            email_body = "Hola " + user.username + ", el usuario " + event.owner.username + " te ha asignado una tarea de su evento. \n"+\
-                        "Haz click en el siguiente enlace para acceder al evento: " + "http://organizat.herokuapp.com/event/" + event.event_link
+            # Si se le asignó un usuario, le envio un mail
+            if task_instance.user:
+                user = task_instance.user
+                event = task_instance.event
+                
+                email_subject = 'Te han asignado una tarea en un evento!'
+                email_body = "Hola " + user.username + ", el usuario " + event.owner.username + " te ha asignado una tarea de su evento. \n"+\
+                            "Haz click en el siguiente enlace para acceder al evento: " + "http://organizat.herokuapp.com/event/" + event.event_link
 
-            send_mail(email_subject, email_body, 'myemail@example.com',[user.email], fail_silently=False)
+                send_mail(email_subject, email_body, 'myemail@example.com',[user.email], fail_silently=False)
 
             return HttpResponseRedirect(reverse('event', kwargs={'token': event.event_link}))
         else:
