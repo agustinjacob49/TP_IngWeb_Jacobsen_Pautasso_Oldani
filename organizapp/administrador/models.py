@@ -64,6 +64,10 @@ class Event(models.Model):
     def list_invitation_accepted(self):
         return Invitation.objects.filter(event=self, accepted_event=True)
 
+    @property
+    def list_tasks(self):
+        return Task.objects.filter(event=self)
+
     def __str__(self):
         return self.name
 
@@ -84,8 +88,10 @@ class Invitation(models.Model):
         verbose_name = 'Invitacion'
         verbose_name_plural = 'Invitaciones'
 
+
 class Task(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Integrate")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Evento")
     title = models.CharField(max_length=50, blank = False, null = False, verbose_name = 'Titulo')
     description = models.CharField(max_length=255, blank = False, null = False, verbose_name = 'Descripcion')
     status = models.CharField(choices = STATES_TAREAS, blank = False, null = False, max_length=11, verbose_name='Estado de la tarea')

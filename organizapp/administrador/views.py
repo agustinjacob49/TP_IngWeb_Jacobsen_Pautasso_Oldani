@@ -1,3 +1,4 @@
+from django.db.models.query_utils import Q
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
 from django.core.paginator import Paginator
@@ -7,7 +8,7 @@ from django.shortcuts import render
 import secrets
 from django.contrib import messages
 from django.template.context_processors import csrf
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 
 from .forms import *
 from .models import *
@@ -197,6 +198,7 @@ def CreateInvitationByLink(request, pk, link):
         messages.error(request, 'El evento alcanzó la cantidad máxima de invitados')
         return render(request, 'event.html', {'event': event})
 
+
 def InvitationDown(request, pk, token):
     invitation = Invitation.objects.get(id=pk)
     invitation.accepted_event = False
@@ -204,12 +206,14 @@ def InvitationDown(request, pk, token):
     event = Event.objects.get(event_link = token)
     return render(request, 'event.html', {'event': event})
 
+
 def InvitationUp(request, pk, token):
     invitation = Invitation.objects.get(id=pk)
     invitation.accepted_event = True
     invitation.save()
     event = Event.objects.get(event_link=token)
     return render(request, 'event.html', {'event': event})
+
 
 class CustomAuthForm(AuthenticationForm):
     error_messages = {
@@ -219,5 +223,45 @@ class CustomAuthForm(AuthenticationForm):
         'inactive': _("This account is inactive."),
     }
 
+
 class CustomLoginView(LoginView):
     authentication_form = CustomAuthForm
+
+
+class InviteUsers(ListView):
+    model = User
+    template_name = 'invite_users.html'
+    queryset = User.objects.filter(is_active = True)
+    context_object_name = 'user'
+    ordering = ['-id']
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(InviteUsers, self).get_context_data(**kwargs)
+        context["event"] = Event.objects.get(event_link = self.kwargs.get('token'))
+
+        return context
+
+    def get_queryset(self):
+        queryset = super(InviteUsers, self).get_queryset()
+        query = self.request.GET.get('find_user')
+
+        if query:
+            queryset = queryset.filter(
+                Q(username__icontains=query)
+            )
+
+        return queryset
+
+
+def send_mail_user(request, pk, token):
+    event = Event.objects.get(event_link=token)
+    user = User.objects.get(id=pk)
+    email_subject = 'Has recibido una invitación a un evento!'
+    email_body = "Hola " + user.username + ", el usuario " + event.owner.username + " te ha invintado a participar de su evento. \n"+\
+                 "Haz click en el siguiente enlace para acceder : " + "http://organizat.herokuapp.com/event/" + event.event_link
+
+    send_mail(email_subject, email_body, 'myemail@example.com',
+              [user.email], fail_silently=False)
+    messages.success(request, ('Usuario ' + user.username + ' ha sido invitado con éxito'))
+    return redirect(reverse('invite_user', kwargs={ 'token': event.event_link }))
