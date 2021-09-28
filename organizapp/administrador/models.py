@@ -18,8 +18,9 @@ STATES_EVENTO_USUARIO = [
 
 STATES_TAREAS = [
     ('realizada', 'REALIZADA'),
-    ('porhacer', 'POR HACER'),
+    ('porhacerasignada', 'POR HACER ASIGNADA'),
     ('enprogreso', 'EN PROGRESO'),
+    ('porhacerNOasignada', 'POR HACER NO ASIGNADA')
 ]
 
 class UserProfile(models.Model):
@@ -90,11 +91,11 @@ class Invitation(models.Model):
 
 
 class Task(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Integrate")
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, verbose_name="Encargado")
     event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Evento")
     title = models.CharField(max_length=50, blank = False, null = False, verbose_name = 'Titulo')
     description = models.CharField(max_length=255, blank = False, null = False, verbose_name = 'Descripcion')
-    status = models.CharField(choices = STATES_TAREAS, blank = False, null = False, max_length=11, verbose_name='Estado de la tarea')
+    status = models.CharField(choices = STATES_TAREAS, blank = False, null = False, max_length=22, verbose_name='Estado de la tarea')
     cost = models.FloatField(default = 0)
 
     def __str__(self):

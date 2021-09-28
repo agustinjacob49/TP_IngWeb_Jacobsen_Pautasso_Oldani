@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Event
+from .models import Event, Task
 from datetime import date
 
 
@@ -57,5 +57,17 @@ class EventForm(forms.ModelForm):
         self.fields["date_event_start"].initial = date.today()
         self.fields["date_event_end"].initial = date.today()
 
-        #self.fields["date_event_start"].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
-        #self.fields["date_event_end"].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
+
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['user', 'title', 'description',
+                  'cost']
+
+    def __init__(self, *args, **kwargs):
+        super(TaskForm, self).__init__(*args, **kwargs)
+
+        self.fields["cost"].initial = 0
+        self.fields["cost"].required = False
+
+
