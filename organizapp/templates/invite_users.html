@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid py-3">
+    <div class="container">
+            <form method="GET" class="form-group">{% csrf_token %}
+              <div class="row">
+
+                <div class="col-12 col-md-9">
+                  <input type="text" class="form-control" name="find_user" placeholder="Ej: pepito" value="{{ request.GET.find_user }}">
+                </div>
+                <div class="col-12 col-md-3">
+                  <button type="submit" class="btn btnP btn-block">Buscar</button>
+                </div>
+              </div>
+            </form>
+        <div class="container border border-white py-3 my-3 col-12">
+            <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+              <table class="table table-striped table-hover">
+            {% if user %}
+              <thead>
+                  <tr>
+                    <th class="text-center">Usuario</th>
+                    <th class="text-center">Enviar invitacion</th>
+                  </tr>
+              </thead>
+              <tbody>
+                {% for u in user %}
+                <tr>
+                  <td class="text-center">{{u.username}}</td>
+                  <td class="text-center">
+                    <a class="text-decoration-none text-white" href="#"
+                          title="Enviar invitacion">
+                      <button type="button" class="btn text-decoration-none text-white"><i class="material-icons" style="font-size:15px;color:black">info</i></button>
+                    </a>
+                  </td>
+                {% endfor %}
+
+              </tbody>
+            {% else %}
+            <thead>
+              <tr>
+                <th>No existen usuarios registrados.</th>
+              </tr>
+            </thead>
+            {% endif %}
+          </table>
+          </div>
+          <hr style="border-color: #454545;">
+            <div class="pagination">
+                      <span class="step-links">
+                          {% if page_obj.has_previous %}
+                              <a href="?page=1" style="color: #cccccc;">&laquo; Primera |</a>
+                              <a href="?page={{ page_obj.previous_page_number }}" style="color: #cccccc;">Anterior |</a>
+                          {% endif %}
+
+                          <span class="current" style="color: white;">
+                              Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                          </span>
+
+                          {% if page_obj.has_next %}
+                              <a href="?page={{ page_obj.next_page_number }}" style="color: #cccccc;">| Siguiente</a>
+                              <a href="?page={{ page_obj.paginator.num_pages }}" style="color: #cccccc;">| Última &raquo;</a>
+                          {% endif %}
+                      </span>
+                  </div>
+        </div>
+        <a href="{% url 'event' event.event_link %}">
+            <button type="button" class="mx-3 btn btn-warning">Atras</button>
+        </a>
+    </div>
+  </div>
+
+{% endblock %}
