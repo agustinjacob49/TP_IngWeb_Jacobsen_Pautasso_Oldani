@@ -90,7 +90,7 @@ class Invitation(models.Model):
 
 
 class Task(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Integrate")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Encargado")
     event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Evento")
     title = models.CharField(max_length=50, blank = False, null = False, verbose_name = 'Titulo')
     description = models.CharField(max_length=255, blank = False, null = False, verbose_name = 'Descripcion')

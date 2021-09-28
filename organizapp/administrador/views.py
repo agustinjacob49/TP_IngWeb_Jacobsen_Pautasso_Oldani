@@ -265,3 +265,33 @@ def send_mail_user(request, pk, token):
               [user.email], fail_silently=False)
     messages.success(request, ('Usuario ' + user.username + ' ha sido invitado con éxito'))
     return redirect(reverse('invite_user', kwargs={ 'token': event.event_link }))
+
+
+def AddTask(request,token):
+    if request.method == "POST":
+        form = TaskForm(request.POST, request.FILES)
+        if form.is_valid():
+            task_instance = form.save(commit=False)
+            task_instance.status = 'POR HACER'
+            task_instance.event = Event.objects.get(event_link = token)
+            task_instance.save()
+
+            messages.success(request, ('Tarea creada con exito!'))
+            
+            user = task_instance.user
+            event = task_instance.event
+            
+            email_subject = 'Te han asignado una tarea en un evento!'
+            email_body = "Hola " + user.username + ", el usuario " + event.owner.username + " te ha asignado una tarea de su evento. \n"+\
+                        "Haz click en el siguiente enlace para acceder al evento: " + "http://organizat.herokuapp.com/event/" + event.event_link
+
+            send_mail(email_subject, email_body, 'myemail@example.com',[user.email], fail_silently=False)
+
+            return HttpResponseRedirect(reverse('event', kwargs={'token': event.event_link}))
+        else:
+            messages.error(request, 'Hay errores en el formulario')
+
+    form = TaskForm()
+    return render(request, 'new-task.html', {'form': form})
+
+    

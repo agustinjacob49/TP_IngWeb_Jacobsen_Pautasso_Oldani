@@ -77,9 +77,9 @@
                 </table>
             </div>
             <div class="col-12 col-md-6">
-                <leyend>Tareas</leyend> <a href="#"><button type="button" class="btn btn-check">Agregar tarea</button></a>
+                <leyend>Tareas</leyend> <a href="{% url 'add_task' event.event_link %}"><button type="button" class="btn btn-success">Agregar tarea</button></a>
                 <table class="table table-striped table-hover">
-                    {% if event.list_invitation %}
+                    {% if event.list_tasks %}
                         <thead>
                             <tr>
                                 <th>Detalle</th>
@@ -89,7 +89,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                        {% for invitation in event.list_invitation %}
+                        {% for invitation in event.list_tasks %}
                             <tr>
                                 <td>{{invitation.user.username}}</td>
                                 {% if invitation.accepted_event %}
