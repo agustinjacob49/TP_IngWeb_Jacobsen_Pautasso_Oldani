@@ -4,6 +4,13 @@
 
 <div class="container-fluid py-3">
     <div class="container">
+      {% if messages %}
+            {% for message in messages %}
+                <div class="{% if message.tags == 'error' %}bg-danger{% else %}bg-success {% endif %} text-white alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+                    {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}
             <form method="GET" class="form-group">{% csrf_token %}
               <div class="row">
 
@@ -30,9 +37,9 @@
                 <tr>
                   <td class="text-center">{{u.username}}</td>
                   <td class="text-center">
-                    <a class="text-decoration-none text-white" href="#"
+                    <a class="text-decoration-none text-white" href="{% url 'send_mail_user' u.id event.event_link %}"
                           title="Enviar invitacion">
-                      <button type="button" class="btn text-decoration-none text-white"><i class="material-icons" style="font-size:15px;color:black">info</i></button>
+                      <button type="button" class="btn text-decoration-none text-white"><i class="material-icons" style="font-size:15px;color:black">send</i></button>
                     </a>
                   </td>
                 {% endfor %}
@@ -51,23 +58,23 @@
             <div class="pagination">
                       <span class="step-links">
                           {% if page_obj.has_previous %}
-                              <a href="?page=1" style="color: #cccccc;">&laquo; Primera |</a>
-                              <a href="?page={{ page_obj.previous_page_number }}" style="color: #cccccc;">Anterior |</a>
+                              <a href="?page=1" style="color: black;">&laquo; Primera |</a>
+                              <a href="?page={{ page_obj.previous_page_number }}" style="color: black;">Anterior |</a>
                           {% endif %}
 
-                          <span class="current" style="color: white;">
+                          <span class="current" style="color: black;">
                               Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
                           </span>
 
                           {% if page_obj.has_next %}
-                              <a href="?page={{ page_obj.next_page_number }}" style="color: #cccccc;">| Siguiente</a>
-                              <a href="?page={{ page_obj.paginator.num_pages }}" style="color: #cccccc;">| Última &raquo;</a>
+                              <a href="?page={{ page_obj.next_page_number }}" style="color: black;">| Siguiente</a>
+                              <a href="?page={{ page_obj.paginator.num_pages }}" style="color: black;">| Última &raquo;</a>
                           {% endif %}
                       </span>
                   </div>
         </div>
         <a href="{% url 'event' event.event_link %}">
-            <button type="button" class="mx-3 btn btn-warning">Atras</button>
+            <button type="button" class="mx-3 btn btn-warning">Atrás</button>
         </a>
     </div>
   </div>

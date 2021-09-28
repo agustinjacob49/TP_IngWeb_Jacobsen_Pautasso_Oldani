@@ -198,12 +198,14 @@ def CreateInvitationByLink(request, pk, link):
         messages.error(request, 'El evento alcanzó la cantidad máxima de invitados')
         return render(request, 'event.html', {'event': event})
 
+
 def InvitationDown(request, pk, token):
     invitation = Invitation.objects.get(id=pk)
     invitation.accepted_event = False
     invitation.save()
     event = Event.objects.get(event_link = token)
     return render(request, 'event.html', {'event': event})
+
 
 def InvitationUp(request, pk, token):
     invitation = Invitation.objects.get(id=pk)
@@ -246,8 +248,20 @@ class InviteUsers(ListView):
 
         if query:
             queryset = queryset.filter(
-                Q(user__username_icontains=query)
-            ).distinct()
+                Q(username__icontains=query)
+            )
 
         return queryset
 
+
+def send_mail_user(request, pk, token):
+    event = Event.objects.get(event_link=token)
+    user = User.objects.get(id=pk)
+    email_subject = 'Has recibido una invitación a un evento!'
+    email_body = "Hola " + user.username + ", el usuario " + event.owner.username + " te ha invintado a participar de su evento. \n"+\
+                 "Haz click en el siguiente enlace para acceder : " + "http://organizat.herokuapp.com/event/" + event.event_link
+
+    send_mail(email_subject, email_body, 'myemail@example.com',
+              [user.email], fail_silently=False)
+    messages.success(request, ('Usuario ' + user.username + ' ha sido invitado con éxito'))
+    return redirect(reverse('invite_user', kwargs={ 'token': event.event_link }))
