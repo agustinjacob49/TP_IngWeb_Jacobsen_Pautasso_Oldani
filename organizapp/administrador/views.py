@@ -15,6 +15,9 @@ from django.core.mail import send_mail
 import datetime
 from django.utils import timezone
 from purl import URL
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import AuthenticationForm
+from django.utils.translation import gettext_lazy as _
 
 # import ipdb; ipdb.set_trace(); para debuguear, n->avanzo, c->hasta el final
 # Create your views here.
@@ -207,3 +210,14 @@ def InvitationUp(request, pk, token):
     invitation.save()
     event = Event.objects.get(event_link=token)
     return render(request, 'event.html', {'event': event})
+
+class CustomAuthForm(AuthenticationForm):
+    error_messages = {
+        'invalid_login': _(
+            "Por favor, chequear si la cuenta se encuentra validada o ingrese correctamente el %(username)s y password. Ambos campos pueden ser sensibles a mayusculas y minusculas "
+        ),
+        'inactive': _("This account is inactive."),
+    }
+
+class CustomLoginView(LoginView):
+    authentication_form = CustomAuthForm

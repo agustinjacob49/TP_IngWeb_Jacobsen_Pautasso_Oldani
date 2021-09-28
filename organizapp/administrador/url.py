@@ -6,8 +6,8 @@ from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
     path('', home, name="home"),
-    path('login/', LoginView.as_view(template_name='login.html'), name="login"),
-    path('logout/', LogoutView.as_view(template_name='logout.html'), name="logout"),
+    path('login/', CustomLoginView.as_view(template_name='login.html'), name="login"),
+    path('logout/', CustomLoginView.as_view(template_name='logout.html'), name="logout"),
     path('register/', register_user, name="register"),
     path('accounts/confirm/<str:activation_key>/', register_confirm, name="activation"),
 
