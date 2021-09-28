@@ -1,3 +1,4 @@
+from django.db.models.query_utils import Q
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
 from django.core.paginator import Paginator
@@ -7,7 +8,7 @@ from django.shortcuts import render
 import secrets
 from django.contrib import messages
 from django.template.context_processors import csrf
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 
 from .forms import *
 from .models import *
@@ -207,3 +208,29 @@ def InvitationUp(request, pk, token):
     invitation.save()
     event = Event.objects.get(event_link=token)
     return render(request, 'event.html', {'event': event})
+
+
+class InviteUsers(ListView):
+    model = User
+    template_name = 'invite_users.html'
+    queryset = User.objects.filter(is_active = True)
+    context_object_name = 'user'
+    ordering = ['-id']
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(InviteUsers, self).get_context_data(**kwargs)
+        context["event"] = Event.objects.get(event_link = self.kwargs.get('token'))
+
+        return context
+
+    def get_queryset(self):
+        queryset = super(InviteUsers, self).get_queryset()
+        query = self.request.GET.get('find_user')
+
+        if query:
+            queryset = queryset.filter(
+                Q(user__username_icontains=query)
+            ).distinct()
+
+        return queryset

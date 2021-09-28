@@ -125,7 +125,9 @@
     {% if event.owner == request.user %}
     <a href="{% url 'delete_event' event.event_link %}"><button type="button" class="ml-3 btn btn-danger">Borrar evento</button></a>
     {% endif %}
-
+    <a href="{% url 'invite_user' event.event_link %}">
+        <button type="button" class="mx-3 btn">Invitar usuarios</button>
+    </a>
     <a href="{% url 'home' %}">
        <button type="button" class="mx-3 btn btn-warning">Ir al inicio</button>
    </a>
