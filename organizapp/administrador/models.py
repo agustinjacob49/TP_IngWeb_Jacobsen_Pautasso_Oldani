@@ -69,6 +69,14 @@ class Event(models.Model):
     def list_tasks(self):
         return Task.objects.filter(event=self)
 
+    @property
+    def total_amount(self):
+        total = 0
+        for i in self.list_tasks:
+            total += i.cost
+
+        return round((total/len(self.list_invitation_accepted)), 1)
+
     def __str__(self):
         return self.name
 
