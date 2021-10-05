@@ -61,7 +61,7 @@ class EventForm(forms.ModelForm):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['user', 'title', 'description',
+        fields = ['user', 'title', 'description', 'status',
                   'cost']
 
     def __init__(self, *args, **kwargs):

@@ -17,10 +17,10 @@ STATES_EVENTO_USUARIO = [
 ]
 
 STATES_TAREAS = [
-    ('realizada', 'REALIZADA'),
-    ('porhacerasignada', 'POR HACER ASIGNADA'),
-    ('enprogreso', 'EN PROGRESO'),
-    ('porhacerNOasignada', 'POR HACER NO ASIGNADA')
+    ('REALIZADA', 'REALIZADA'),
+    ('POR HACER ASIGNADA', 'POR HACER ASIGNADA'),
+    ('EN PROGRESO', 'EN PROGRESO'),
+    ('POR HACER NO ASIGNADA', 'POR HACER NO ASIGNADA')
 ]
 
 class UserProfile(models.Model):
@@ -68,6 +68,14 @@ class Event(models.Model):
     @property
     def list_tasks(self):
         return Task.objects.filter(event=self)
+
+    @property
+    def total_amount(self):
+        total = 0
+        for i in self.list_tasks:
+            total += i.cost
+
+        return round((total/len(self.list_invitation_accepted)), 1)
 
     def __str__(self):
         return self.name

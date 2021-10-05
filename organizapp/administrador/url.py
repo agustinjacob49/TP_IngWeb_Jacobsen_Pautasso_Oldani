@@ -7,7 +7,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 urlpatterns = [
     path('', home, name="home"),
     path('login/', CustomLoginView.as_view(template_name='login.html'), name="login"),
-    path('logout/', CustomLoginView.as_view(template_name='logout.html'), name="logout"),
+    path('logout/', LogoutView.as_view(template_name='logout.html'), name="logout"),
     path('register/', register_user, name="register"),
     path('accounts/confirm/<str:activation_key>/', register_confirm, name="activation"),
 
@@ -24,6 +24,7 @@ urlpatterns = [
     path('invitation-up/<int:pk>/<str:token>/', login_required(InvitationUp), name="invitation_up"),
     path('invite-users<str:token>/', login_required(InviteUsers.as_view()), name="invite_user"),
     path('invite-user/<int:pk>/<str:token>/', login_required(send_mail_user), name="send_mail_user"),
-    path('add_task/<str:token>/', login_required(AddTask), name="add_task")
+    path('add_task/<str:token>/', login_required(AddTask), name="add_task"),
+    path('event/update-task/<str:token>/<int:task_pk>/', login_required(UpdateTask), name="update_task")
 ]
 #+ statics(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
