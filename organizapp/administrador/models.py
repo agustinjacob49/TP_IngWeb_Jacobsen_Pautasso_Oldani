@@ -17,10 +17,10 @@ STATES_EVENTO_USUARIO = [
 ]
 
 STATES_TAREAS = [
-    ('realizada', 'REALIZADA'),
-    ('porhacerasignada', 'POR HACER ASIGNADA'),
-    ('enprogreso', 'EN PROGRESO'),
-    ('porhacerNOasignada', 'POR HACER NO ASIGNADA')
+    ('REALIZADA', 'REALIZADA'),
+    ('POR HACER ASIGNADA', 'POR HACER ASIGNADA'),
+    ('EN PROGRESO', 'EN PROGRESO'),
+    ('POR HACER NO ASIGNADA', 'POR HACER NO ASIGNADA')
 ]
 
 class UserProfile(models.Model):

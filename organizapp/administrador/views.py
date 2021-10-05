@@ -191,7 +191,7 @@ def CreateInvitationByLink(request, pk, link):
     event = Event.objects.get(event_link=link)
     if len(event.list_invitation) < event.max_guests:
         new_invitation = Invitation.objects.create(user_id=pk, event_event_link=link)
-        new_invitation.accepted_event = True
+        new_invitation.accepted_event = False
         new_invitation.save()
         return render(request, 'event.html', {'event': event})
     else:
@@ -267,7 +267,7 @@ def send_mail_user(request, pk, token):
     return redirect(reverse('invite_user', kwargs={ 'token': event.event_link }))
 
 
-def AddTask(request,token):
+def AddTask(request, token):
     if request.method == "POST":
         form = TaskForm(request.POST, request.FILES)
         if form.is_valid():
@@ -292,11 +292,33 @@ def AddTask(request,token):
 
                 send_mail(email_subject, email_body, 'myemail@example.com',[user.email], fail_silently=False)
 
-            return HttpResponseRedirect(reverse('event', kwargs={'token': event.event_link}))
+            return HttpResponseRedirect(reverse('event', kwargs={'token': token}))
         else:
             messages.error(request, 'Hay errores en el formulario')
 
     form = TaskForm()
-    return render(request, 'new-task.html', {'form': form})
+    event = Event.objects.get(event_link=token)
+    return render(request, 'new-task.html', {'form': form,
+                                             'event': event,
+                                             'update': False})
 
-    
+
+def UpdateTask(request, token, task_pk):
+    instance = Task.objects.get(id=task_pk)
+    form = TaskForm(request.POST or None, instance=instance)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('event', kwargs={'token': token}))
+        else:
+            messages.error(request, form.errors)
+
+    event = Event.objects.get(event_link=token)
+    assigned_user = User.objects.get(id=instance.user.id)
+    context = {
+        'form': form,
+        'event': event,
+        'update': True,
+        'assigned_user': assigned_user
+    }
+    return render(request, 'new-task.html', context)

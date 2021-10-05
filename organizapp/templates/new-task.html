@@ -9,21 +9,46 @@
             </div>
         {% endfor %}
     {% endif %}
-    <h1>Crear tarea</h1>
+
+    {% if update %}
+        <h1>Modificar tarea</h1>
+    {% else %}
+        <h1>Crear tarea</h1>
+    {% endif %}
 
     <form method="POST">{% csrf_token %}
         <label class="text-black">Titulo</label>
         {{form.title}}
-        <label class="text-black">Usuario asignado:</label>
-        {{form.user}}
+        <label class="text-black">Usuario asignado</label>
+        <select name="user" id="id_user">
+        {% if update %}
+            <option value={{assigned_user.id}}>{{assigned_user.username}}</option>
+        {% endif %}
+        <option value="">--------------</option>
+        {% for invitation in event.list_invitation_accepted %}
+            <option value={{invitation.user.id}}>{{invitation.user.username}}</option>
+        {% empty %}
+            <option value="">No hay invitados</option>
+        {% endfor %}
+
+        </select>
+
         <label class="text-black">Descripción</label>
         {{form.description}}
+
+        {% if update %}
+        <label class="text-black">Estado</label>
+        {{form.status}}
+        <label class="text-black">Costo</label>
+        {{form.cost}}
+        {% endif %}
+
         <div class="py-2 my-2">
             <a class="text-decoration-none text-white btn-block"
                href="">
-                <button type="submit" class="btn btn-block btn-success">Crear</button>
+                <button type="submit" class="btn btn-block btn-success">{% if update %}Guardar cambios{% else %}Crear{% endif %}</button>
             </a>
-            <a href="{% url 'home' %}">
+            <a href="{% url 'event' event.event_link %}">
                <button type="button" class="btn btn-warning">Atrás</button>
            </a>
         </div>
