@@ -69,5 +69,6 @@ class TaskForm(forms.ModelForm):
 
         self.fields["cost"].initial = 0
         self.fields["cost"].required = False
+        self.fields["status"].required = False
 
 
