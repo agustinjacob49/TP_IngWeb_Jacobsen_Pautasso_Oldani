@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid py-3">
+    <div class="container">
+
+      <h4>Búsqueda de eventos:</h4>
+
+      <form method="get" action=".">
+          <div class="col-sm-5 my-1">
+          <div class = "input-group mb-3">
+              <input type="text" class="form-control col-xs-4" name="q" id="q" placeholder="Fiesta de cumpleaños de...">
+              <div class="input-group-append">
+                  <button class="btn btn-outline-success my-sm-0" type="submit">Buscar</button>
+              </div>
+          </div> 
+          </div>
+              {% if query %}
+                  <br>
+                  <h3>Resultados :</h3>
+                  <div class="row">
+                    {% for i in page.object_list %}
+                    <div class ="col-md-5 mb-4">
+                        <div class="card text-center p-0">
+                            <div class="card-body">
+                                <a class="card-title" href="{% url 'event' i.object.event_link %}">{{ i.name }}</a>
+                                <div class="card-footer">
+                                    <h7 class="card-text">{{ i.description }}</h7>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p>No se encontraron Eventos.</p>
+                    {% endfor %}
+                </div>          
+                  {% if page.has_previous or page.has_next %}
+                      <div>
+                          {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                          |
+                          {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+                      </div>
+                  {% endif %}
+              {% endif %}
+      </form>
+    </div>
+  </div>
+
+{% endblock %}
