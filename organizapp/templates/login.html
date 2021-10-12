@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" type="text/css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
     <title>Ingresar al sitio</title>
+
 </head>
 <body>
 
@@ -25,6 +27,13 @@
       <div class="main">
          <div class="col-md-6 col-sm-12">
             <div class="login-form">
+                {% if form.non_field_errors %}
+                  <div class="alert alert-danger" role="alert">
+                    {% for error in form.non_field_errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
                <form class="form" method="post">
                   {% csrf_token %}
                   <div class="form-group">
@@ -41,8 +50,6 @@
                   <button type="submit" class="btn btn-black float-right">Ingresar</button>
                </form>
 
-
-               
             </div>
          </div>
       </div>

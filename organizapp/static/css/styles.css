@@ -87,9 +87,27 @@ input{
 }
 
 #cover_page {
-  background-color: #ffe836 !important;
+  background-color: #ffc107 !important;
 }
 
 nav.navbar.navbar-expand-lg.navbar-light.bg-light {
-  background-color: #ffe836 !important;
+  background-color: #ffc107 !important;
+}
+
+#link {
+    margin-top: 4px;
+}
+
+#inputLink {
+    display: none;
+}
+
+#link input{
+    background-color: #f0f0f0;
+}
+
+#logo {
+    font-style: italic !important;
+    font-weight: 700;
+    font-size: 1.5rem;
 }

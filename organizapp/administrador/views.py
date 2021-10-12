@@ -1,31 +1,54 @@
-import datetime
-import hashlib
-from random import random
-
-from django.contrib.messages import success
-from django.shortcuts import render, redirect
-from django.template.context_processors import csrf
-from django.views.generic import (TemplateView)
+from django.db.models.query_utils import Q
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView
+from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.shortcuts import render
-from .forms import UserRegisterForm
 import secrets
 from django.contrib import messages
-
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
-
 from django.template.context_processors import csrf
+from django.views.generic import DetailView, ListView
+
 from .forms import *
 from .models import *
-from django.template import RequestContext
 from django.core.mail import send_mail
-import hashlib, datetime, random
+import datetime
 from django.utils import timezone
+from purl import URL
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import AuthenticationForm
+from django.utils.translation import gettext_lazy as _
 
+# import ipdb; ipdb.set_trace(); para debuguear, n->avanzo, c->hasta el final
 # Create your views here.
 def home(request):
-    users = UserProfile.objects.all()
-    return render(request, 'home.html', {'users': users})
+    # limito los usuarios y eventos a solo 10, proximamente hacer una vista con todos los eventos
+    # y todas los usuarios
+    users = User.objects.all().order_by('-id')[0:10]
+    events = Event.objects.all().order_by('-id')[0:10]
+
+    # Si existe un link
+    if request.GET.get('event_link_name'):
+        token = URL(request.GET.get('event_link_name'))
+        token = token.path_segments()[1]
+
+        event = Event.objects.get(event_link=token)
+        if not Invitation.objects.filter(user=request.user, event=event).exists():
+            if len(event.list_invitation_accepted) < event.max_guests:
+                new_invitation = Invitation.objects.create(user=request.user, event=event, accepted_event=True)
+                new_invitation.save()
+                messages.success(request, "Te has unido a este evento con éxito.")
+                return render(request, 'event.html', {'event': event})
+            else:
+                messages.error(request, 'El evento alcanzó la cantidad máxima de invitados')
+                return render(request, 'event.html', {'event': event})
+        else:
+            messages.error(request, "Ya estas unido a este evento")
+            return render(request, 'event.html', {'event': event})
+
+    return render(request, 'home.html', {'users': users,
+                                         'events': events})
 
 
 def register_user(request):
@@ -69,7 +92,7 @@ def register_user(request):
 def register_confirm(request, activation_key):
     # Verifica que el usuario ya está logeado
     if request.user and request.user.is_authenticated:
-        HttpResponseRedirect('home')
+        redirect('home.html')
 
     # Verifica que el token de activación sea válido y sino retorna un 404
     user_profile = UserProfile.objects.get(activation_key=activation_key)
@@ -88,5 +111,214 @@ def register_confirm(request, activation_key):
     return render(request, 'home.html')
 
 
-def privatePage(request):
-    return render(request, 'page-private.html')
+def AddEvent(request):
+    if request.method == "POST":
+        form = EventForm(request.POST, request.FILES)
+        if form.is_valid():
+            event_instance = form.save(commit=False)
+            """ le paso el usuario que creo el evento y genero un token para el link"""
+            event_instance.owner_id = request.user.id
+            event_instance.event_link = secrets.token_hex(30)
+            if event_instance.date_event_start > event_instance.date_event_end:
+                messages.error(request, 'La fecha de inicio del evento no es valida (debe ser anterior a la fecha de finalizacion)')
+                return render(request, 'new-event.html', {'form': form})
+            else:
+                event_instance.save()
+
+                """ Creo la invitacion del organizador """
+                new_invitation = Invitation.objects.create(user=request.user, event=event_instance, accepted_event = True)
+                new_invitation.save()
+
+                messages.success(request, ('Evento creado con exito!'))
+
+                return HttpResponseRedirect(reverse('event', kwargs={'token': event_instance.event_link}))
+        else:
+            messages.error(request, 'Hay errores en el formulario')
+
+    form = EventForm()
+    return render(request, 'new-event.html', {'form': form})
+
+
+def EventView(request, token):
+    event = Event.objects.get(event_link=token)
+    return render(request, 'event.html', {'event': event})
+
+
+def DeleteEvent(request, token):
+    event = Event.objects.get(event_link=token)
+    event.delete()
+    messages.success(request, "Evento borrado con éxito")
+    return redirect('home')
+
+
+# Desde el perfil, clickeando sobre los iconos de estado de aceptacion puedo darle de baja o alta a la invitacion
+def EventDown(request, pk, token):
+    event = Event.objects.get(event_link=token)
+    invitation = Invitation.objects.get(user_id=pk, event_id=event.id)
+    invitation.accepted_event = False
+    invitation.save()
+    invitations = Invitation.objects.filter(user_id=pk)
+    return render(request, 'profile.html', {'invitations': invitations})
+
+
+def EventUp(request, pk, token):
+    event = Event.objects.get(event_link=token)
+    invitation = Invitation.objects.get(user_id=pk, event_id=event.id)
+    invitation.accepted_event = True
+    invitation.save()
+    invitations = Invitation.objects.filter(user_id=pk)
+    return render(request, 'profile.html', {'invitations': invitations})
+
+
+def Profile(request, pk):
+    user = User.objects.get(id=pk)
+    invitations = Invitation.objects.filter(user_id=pk)[:10]
+    return render(request, 'profile.html', {'invitations': invitations,
+                                            'user': user})
+
+
+def event_listing(request):
+    event_list = Invitation.objects.filter(user_id=request.user.id)
+    # Con paginator puedo dividir de a 10 registros
+    paginator = Paginator(event_list, 1)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'invitations-by-profile.html', {'page_obj': page_obj,
+                                                            'invitations': paginator.object_list})
+
+
+def CreateInvitationByLink(request, pk, link):
+    event = Event.objects.get(event_link=link)
+    if len(event.list_invitation) < event.max_guests:
+        new_invitation = Invitation.objects.create(user_id=pk, event_event_link=link)
+        new_invitation.accepted_event = False
+        new_invitation.save()
+        return render(request, 'event.html', {'event': event})
+    else:
+        messages.error(request, 'El evento alcanzó la cantidad máxima de invitados')
+        return render(request, 'event.html', {'event': event})
+
+
+def InvitationDown(request, pk, token):
+    invitation = Invitation.objects.get(id=pk)
+    invitation.accepted_event = False
+    invitation.save()
+    event = Event.objects.get(event_link = token)
+    return render(request, 'event.html', {'event': event})
+
+
+def InvitationUp(request, pk, token):
+    invitation = Invitation.objects.get(id=pk)
+    invitation.accepted_event = True
+    invitation.save()
+    event = Event.objects.get(event_link=token)
+    return render(request, 'event.html', {'event': event})
+
+
+class CustomAuthForm(AuthenticationForm):
+    error_messages = {
+        'invalid_login': _(
+            "Por favor, chequear si la cuenta se encuentra validada o ingrese correctamente el %(username)s y password. Ambos campos pueden ser sensibles a mayusculas y minusculas "
+        ),
+        'inactive': _("This account is inactive."),
+    }
+
+
+class CustomLoginView(LoginView):
+    authentication_form = CustomAuthForm
+
+
+class InviteUsers(ListView):
+    model = User
+    template_name = 'invite_users.html'
+    queryset = User.objects.filter(is_active = True)
+    context_object_name = 'user'
+    ordering = ['-id']
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(InviteUsers, self).get_context_data(**kwargs)
+        context["event"] = Event.objects.get(event_link = self.kwargs.get('token'))
+
+        return context
+
+    def get_queryset(self):
+        queryset = super(InviteUsers, self).get_queryset()
+        query = self.request.GET.get('find_user')
+
+        if query:
+            queryset = queryset.filter(
+                Q(username__icontains=query)
+            )
+
+        return queryset
+
+
+def send_mail_user(request, pk, token):
+    event = Event.objects.get(event_link=token)
+    user = User.objects.get(id=pk)
+    email_subject = 'Has recibido una invitación a un evento!'
+    email_body = "Hola " + user.username + ", el usuario " + event.owner.username + " te ha invintado a participar de su evento. \n"+\
+                 "Haz click en el siguiente enlace para acceder : " + "http://organizat.herokuapp.com/event/" + event.event_link
+
+    send_mail(email_subject, email_body, 'myemail@example.com',
+              [user.email], fail_silently=False)
+    messages.success(request, ('Usuario ' + user.username + ' ha sido invitado con éxito'))
+    return redirect(reverse('invite_user', kwargs={ 'token': event.event_link }))
+
+
+def AddTask(request, token):
+    if request.method == "POST":
+        form = TaskForm(request.POST, request.FILES)
+        if form.is_valid():
+            task_instance = form.save(commit=False)
+            if task_instance.user:
+                task_instance.status = 'POR HACER ASIGNADA'
+            else:
+                task_instance.status = 'POR HACER NO ASIGNADA'
+            task_instance.event = Event.objects.get(event_link = token)
+            task_instance.save()
+
+            messages.success(request, ('Tarea creada con exito!'))
+            
+            # Si se le asignó un usuario, le envio un mail
+            if task_instance.user:
+                user = task_instance.user
+                event = task_instance.event
+                
+                email_subject = 'Te han asignado una tarea en un evento!'
+                email_body = "Hola " + user.username + ", el usuario " + event.owner.username + " te ha asignado una tarea de su evento. \n"+\
+                            "Haz click en el siguiente enlace para acceder al evento: " + "http://organizat.herokuapp.com/event/" + event.event_link
+
+                send_mail(email_subject, email_body, 'myemail@example.com',[user.email], fail_silently=False)
+
+            return HttpResponseRedirect(reverse('event', kwargs={'token': token}))
+        else:
+            messages.error(request, 'Hay errores en el formulario')
+
+    form = TaskForm()
+    event = Event.objects.get(event_link=token)
+    return render(request, 'new-task.html', {'form': form,
+                                             'event': event,
+                                             'update': False})
+
+
+def UpdateTask(request, token, task_pk):
+    instance = Task.objects.get(id=task_pk)
+    form = TaskForm(request.POST or None, instance=instance)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('event', kwargs={'token': token}))
+        else:
+            messages.error(request, form.errors)
+
+    event = Event.objects.get(event_link=token)
+    assigned_user = User.objects.get(id=instance.user.id)
+    context = {
+        'form': form,
+        'event': event,
+        'update': True,
+        'assigned_user': assigned_user
+    }
+    return render(request, 'new-task.html', context)
