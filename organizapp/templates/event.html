@@ -97,8 +97,8 @@
                                 <td class="text-center">{{task.user|default_if_none:'No asignado'}}</td>
                                 <td class="text-center">{{task.title}}</td>
                                 <td class="text-center">{{task.status}}</td>
-                                <td class="text-center" id="amount">{{task.cost}}</td>
-                                <td class="text-center" id="total"></td>
+                                <td class="text-center" name="amount">{{task.cost}}</td>
+                                <td class="text-center" name="total"></td>
                                 {% if request.user.is_superuser or request.user.id == event.owner.id or request.user.id == task.user.id %}
                                     <td class="text-center">
                                         <a href="{% url 'update_task' event.event_link task.id %}">
@@ -160,21 +160,24 @@
     };
 
     window.onload=function(){
-        var amount = document.getElementById("amount").innerHTML;
-        amount = parseFloat(amount.replace(",","."));
+        for (var i = 0; i < document.getElementsByName("amount").length ; i++) {
+            var amount = document.getElementsByName("amount")[i].innerHTML;
+            amount = parseFloat(amount.replace(",","."));
 
-        var total_amount = "{{event.total_amount}}";
-        total_amount = parseFloat(total_amount.replace(",","."));
-        total_amount = amount-total_amount;
+            var total_amount = "{{event.total_amount}}";
+            total_amount = parseFloat(total_amount.replace(",","."));
+            total_amount = amount-total_amount;
 
-        var message;
-        if (total_amount < 0){
-            message = "Debe $" + total_amount.toString().replace(".",",");
-        }else{
-            message = "Le deben $" + total_amount.toString().replace(".",",");
+            var message;
+            if (total_amount < 0){
+                message = "Debe $" + Math.abs(total_amount).toString().replace(".",",");
+            }else{
+                message = "Le deben $" + total_amount.toString().replace(".",",");
+            }
+
+            document.getElementsByName('total')[i].innerHTML = message;
         }
-
-        document.getElementById('total').innerHTML = message;
+        
     };
 </script>
 {% endblock %}
