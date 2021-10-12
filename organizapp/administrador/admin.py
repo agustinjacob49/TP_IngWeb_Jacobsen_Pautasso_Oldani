@@ -14,5 +14,12 @@ class InvitationAdmin(admin.ModelAdmin):
     search_fields = ('user', "event")
 
 
+class TaskAdmin(admin.ModelAdmin):
+    list_display = ("user", "event",)
+    list_filter = ('user', "event")
+    search_fields = ('user', "event")
+
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Invitation, InvitationAdmin)
+admin.site.register(Task, TaskAdmin)

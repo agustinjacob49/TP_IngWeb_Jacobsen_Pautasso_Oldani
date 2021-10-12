@@ -64,6 +64,7 @@
                                     </td>
                                     {% endif %}
                                 {% endif %}
+
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -86,6 +87,7 @@
                                 <th class="text-center">Titulo</th>
                                 <th class="text-center">Estado</th>
                                 <th class="text-center">Costo</th>
+                                <th class="text-center">Total</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -95,7 +97,8 @@
                                 <td class="text-center">{{task.user|default_if_none:'No asignado'}}</td>
                                 <td class="text-center">{{task.title}}</td>
                                 <td class="text-center">{{task.status}}</td>
-                                <td class="text-center">$ {{task.cost}}</td>
+                                <td class="text-center" name="amount">{{task.cost}}</td>
+                                <td class="text-center" name="total"></td>
                                 {% if request.user.is_superuser or request.user.id == event.owner.id or request.user.id == task.user.id %}
                                     <td class="text-center">
                                         <a href="{% url 'update_task' event.event_link task.id %}">
@@ -110,8 +113,9 @@
                             <tr>
                                 <td></td>
                                 <td></td>
-                                <td class="text-center">Por persona: </td>
-                                <td class="text-center">${{event.total_amount}}</td>
+                                <td class="text-center">POR PERSONA: </td>
+                                <td class="text-center">{{event.total_amount}}</td>
+                                <td class="text-center"></td>
                                 <td></td>
                             </tr>
                         </thead>
@@ -145,7 +149,7 @@
 
 
 </div>
-<script>
+<script type="text/javascript">
     function getlink() {
         var aux = document.createElement("input");
         aux.setAttribute("value",window.location.href);
@@ -153,6 +157,27 @@
         aux.select();
         document.execCommand("copy");
         document.body.removeChild(aux);
-    }
+    };
+
+    window.onload=function(){
+        for (var i = 0; i < document.getElementsByName("amount").length ; i++) {
+            var amount = document.getElementsByName("amount")[i].innerHTML;
+            amount = parseFloat(amount.replace(",","."));
+
+            var total_amount = "{{event.total_amount}}";
+            total_amount = parseFloat(total_amount.replace(",","."));
+            total_amount = amount-total_amount;
+
+            var message;
+            if (total_amount < 0){
+                message = "Debe $" + Math.abs(total_amount).toString().replace(".",",");
+            }else{
+                message = "Le deben $" + total_amount.toString().replace(".",",");
+            }
+
+            document.getElementsByName('total')[i].innerHTML = message;
+        }
+        
+    };
 </script>
 {% endblock %}

@@ -23,6 +23,7 @@ STATES_TAREAS = [
     ('POR HACER NO ASIGNADA', 'POR HACER NO ASIGNADA')
 ]
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     activation_key = models.CharField(max_length=255, blank=True)
