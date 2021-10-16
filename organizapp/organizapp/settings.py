@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'django-haystack'
+    'django-haystack',
     'haystack',
     'administrador',
     'robots'
