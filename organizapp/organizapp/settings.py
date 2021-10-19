@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'administrador',
+    'haystack',
+    'django-haystack',
     'robots'
 ]
 
