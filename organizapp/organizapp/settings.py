@@ -34,7 +34,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django-haystack',
-    'haystack',
     'robots',
     'django.contrib.admin',
     'django.contrib.auth',
