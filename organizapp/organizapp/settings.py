@@ -100,7 +100,7 @@ else:
     HAYSTACK_CONNECTIONS = {
         'default': {
             'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-            'PATH': os.path.join(BASE_DIR, 'organizapp/whoosh_index'),
+            'PATH': os.path.join(BASE_DIR, 'organizapp/organizapp/whoosh_index'),
         },
     }
 
