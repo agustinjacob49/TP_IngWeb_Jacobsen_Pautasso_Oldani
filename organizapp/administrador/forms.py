@@ -32,7 +32,7 @@ class UserRegisterForm(UserCreationForm):
             User._default_manager.get(email=email)
         except User.DoesNotExist:
             return email
-        raise forms.ValidationError('email duplicado')
+        raise forms.ValidationError('Email duplicado')
 
 
 class EventForm(forms.ModelForm):

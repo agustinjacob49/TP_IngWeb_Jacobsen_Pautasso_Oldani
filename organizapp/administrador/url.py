@@ -22,9 +22,10 @@ urlpatterns = [
     path('event-up/<int:pk>/<str:token>/', login_required(EventUp), name="event_up"),
     path('invitation-down/<int:pk>/<str:token>/', login_required(InvitationDown), name="invitation_down"),
     path('invitation-up/<int:pk>/<str:token>/', login_required(InvitationUp), name="invitation_up"),
-    path('invite-users<str:token>/', login_required(InviteUsers.as_view()), name="invite_user"),
+    path('invite-users/<str:token>/', login_required(InviteUsers.as_view()), name="invite_user"),
     path('invite-user/<int:pk>/<str:token>/', login_required(send_mail_user), name="send_mail_user"),
     path('add_task/<str:token>/', login_required(AddTask), name="add_task"),
-    path('event/update-task/<str:token>/<int:task_pk>/', login_required(UpdateTask), name="update_task")
+    path('event/update-task/<str:token>/<int:task_pk>/', login_required(UpdateTask), name="update_task"),
+    path('update-task-status/<int:pk>/<str:status>', login_required(UpdateStatusTask), name="update-task-status"),
 ]
 #+ statics(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

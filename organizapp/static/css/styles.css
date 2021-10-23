@@ -111,3 +111,15 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light {
     font-weight: 700;
     font-size: 1.5rem;
 }
+
+#parent {
+    display: flex;
+}
+#narrow {
+    width: 50px;
+    /* Just so it's visible */
+}
+#wide {
+    flex: 1;
+    /* Just so it's visible */
+}

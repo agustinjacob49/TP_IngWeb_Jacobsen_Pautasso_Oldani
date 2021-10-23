@@ -67,6 +67,14 @@ class Event(models.Model):
         return Invitation.objects.filter(event=self, accepted_event=True)
 
     @property
+    def list_users_accepted(self):
+        a = []
+        for invitation in self.list_invitation_accepted:
+            a.append(invitation.user)
+        return a
+
+
+    @property
     def list_tasks(self):
         return Task.objects.filter(event=self)
 
@@ -109,6 +117,14 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+
+    def availables_status(self):
+        tabla_switch = {
+            'POR HACER ASIGNADA': ['EN PROGRESO', 'FINALIZADA'],
+            'EN PROGRESO': ['POR HACER ASIGNADA', 'FINALIZADA'],
+            'FINALIZADA': ['EN PROGRESO', 'POR HACER ASIGNADA'],
+        }
+        return tabla_switch.get(self.status, "NA")
 
     class Meta:
         verbose_name = 'Tarea'

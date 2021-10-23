@@ -82,7 +82,6 @@ def register_user(request):
             return redirect('home')
         else:
             messages.error(request, form.errors)
-            return redirect('home')
     else:
         form = UserRegisterForm()
 
@@ -141,7 +140,27 @@ def AddEvent(request):
 
 def EventView(request, token):
     event = Event.objects.get(event_link=token)
-    return render(request, 'event.html', {'event': event})
+    if request.GET.get('event_link_name'):
+        token = URL(request.GET.get('event_link_name'))
+        token = token.path_segments()[1]
+
+        event = Event.objects.get(event_link=token)
+        if not Invitation.objects.filter(user=request.user, event=event).exists():
+            if len(event.list_invitation_accepted) < event.max_guests:
+                new_invitation = Invitation.objects.create(user=request.user, event=event, accepted_event=True)
+                new_invitation.save()
+                messages.success(request, "Te has unido a este evento con éxito.")
+            else:
+                messages.error(request, 'El evento alcanzó la cantidad máxima de invitados')
+        else:
+            messages.error(request, "Ya estas unido a este evento")        
+
+    if event.list_invitation.filter(user = request.user).first() is not None:
+        isGuest = True
+    else:
+        isGuest = False
+
+    return render(request, 'event.html', {'event': event, 'isGuest': isGuest })
 
 
 def DeleteEvent(request, token):
@@ -214,6 +233,19 @@ def InvitationUp(request, pk, token):
     event = Event.objects.get(event_link=token)
     return render(request, 'event.html', {'event': event})
 
+def UpdateStatusTask(request, pk, status):
+    task = Task.objects.get(id=pk)
+    task.status = status
+    task.save()
+    event = Event.objects.get(event_link = task.event.event_link)
+
+    if event.list_invitation.filter(user = request.user).first() is not None:
+        isGuest = True
+    else:
+        isGuest = False
+
+    return render(request, 'event.html', {'event': event, 'isGuest':isGuest})
+
 
 class CustomAuthForm(AuthenticationForm):
     error_messages = {
@@ -229,6 +261,7 @@ class CustomLoginView(LoginView):
 
 
 class InviteUsers(ListView):
+    ## event = Event.objects.get(event_link='hola')
     model = User
     template_name = 'invite_users.html'
     queryset = User.objects.filter(is_active = True)
@@ -242,10 +275,15 @@ class InviteUsers(ListView):
 
         return context
 
-    def get_queryset(self):
+    def get_queryset(self): 
         queryset = super(InviteUsers, self).get_queryset()
-        query = self.request.GET.get('find_user')
+        ## Me traigo la lista de usuarios que ya aceptaron.
+        list_accepted = Event.objects.get(event_link = self.kwargs.get('token')).list_users_accepted
 
+        ## Los excluyo de mi queryset segun la pk.
+        queryset = queryset.exclude(pk__in=[user.pk for user in list_accepted])
+        
+        query = self.request.GET.get('find_user')
         if query:
             queryset = queryset.filter(
                 Q(username__icontains=query)
@@ -306,15 +344,41 @@ def AddTask(request, token):
 def UpdateTask(request, token, task_pk):
     instance = Task.objects.get(id=task_pk)
     form = TaskForm(request.POST or None, instance=instance)
+    hasError = False
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            ## Si la tarea tiene estado POR HACER NO ASIGNADA y seteamos un usuario. Cambiamos el estado a por hacer asignada.
+            if instance.status == '':
+                instance.status = 'POR HACER NO ASIGNADA'
+                
+            if instance.status == 'POR HACER NO ASIGNADA' and form.instance.user:
+                form.instance.status = 'POR HACER ASIGNADA'
+            else:
+                ## Si la tarea esta en POR HACER ASIGNADA y quitamos el usuario -> Cambiamos el estado a POR HACER NO ASIGNADA.
+                if instance.status == 'POR HACER ASIGNADA' and not form.instance.user:
+                    form.instance.status = 'POR HACER NO ASIGNADA'
+            
+            ## Si la tarea esta en POR HACER ASIGNADA y quitamos el usuario -> Cambiamos el estado a POR HACER NO ASIGNADA.
+            if instance.status == 'EN PROGRESO' or instance.status == 'REALIZADA' and not form.instance.user:
+                messages.error(request, 'El estado de la tarea es "EN PROGRESO" o "REALIZADA" y no se permite desasignar usuario')
+                hasError = True
+
+            if form.instance.user and instance.status == 'POR HACER NO ASIGNADA':
+                messages.error(request, 'El estado de la tarea es "POR HACER NO ASIGNADA" no permite asignar un usuario')
+                hasError = True
+            
+            if not hasError:
+                form.save()
             return HttpResponseRedirect(reverse('event', kwargs={'token': token}))
+                
         else:
             messages.error(request, form.errors)
 
     event = Event.objects.get(event_link=token)
-    assigned_user = User.objects.get(id=instance.user.id)
+    assigned_user = None
+    if instance.user:
+        assigned_user = User.objects.get(id=instance.user.id)
+    
     context = {
         'form': form,
         'event': event,

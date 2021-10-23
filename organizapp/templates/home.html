@@ -67,37 +67,31 @@
         {% endif %}
         <div class="container border border-white py-3 my-3">
             <div class="row">
-                {% if request.user.is_anonymous %}
                     <div class="col-12 offset-2 offset-md-2 col-md-4 py-3 my-3">
-                        <a href="#" onclick="alert('Debes inicar sesión para crear un evento')">
+                        <a  {% if request.user.is_anonymous %} 
+                                href="#" 
+                                onclick="alert('Debes inicar sesión para crear un evento')"  
+                                {% else %}
+                                href="{% url 'add_event' %}"
+                                {% endif %}
+                                >
                             <button type="button" class="btn btn-primary">
                                 Crear evento
                             </button>
                         </a>
                     </div>
                     <div class="col-12 offset-2 offset-md-2 col-md-4 py-3 my-3">
-                        <a href="#" onclick="alert('Debes inicar sesión para ingresar un link')">
+                        <a  {% if request.user.is_anonymous %} 
+                            href="#" onclick="alert('Debes inicar sesión para ingresar un link')"
+                            {% else %}
+                            href="#" onclick="showInputLink()"
+                            {% endif %}
+                            >
                             <button type="button" class="btn btn-primary">
                                 Ingresar link
                             </button>
                         </a>
                     </div>
-                {% else %}
-                    <div class="col-12 offset-2 offset-md-2 col-md-4 py-3 my-3">
-                        <a href="{% url 'add_event' %}">
-                            <button type="button" class="btn btn-primary">
-                                Crear evento
-                            </button>
-                        </a>
-                    </div>
-                    <div class="col-12 offset-2 offset-md-2 col-md-4 py-3 my-3">
-                        <a href="#" onclick="showInputLink()">
-                            <button type="button" class="btn btn-primary">
-                                Ingresar link
-                            </button>
-                        </a>
-                    </div>
-                {% endif %}
             </div>
             <div id="inputLink" style="display: none">
                 <div class="row">
