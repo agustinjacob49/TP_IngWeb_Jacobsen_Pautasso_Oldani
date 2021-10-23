@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'robots',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,9 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'haystack',
     'administrador',
-    'robots'
+    'haystack',
+    'whoosh'
 ]
 
 MIDDLEWARE = [
@@ -87,20 +88,10 @@ DATABASES = {
 }
 
 # Search 
-
-if os.environ.get('SEARCHBOX_URL'):
-    HAYSTACK_CONNECTIONS = {
-        'default': {
-            'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-            'URL': os.environ.get('SEARCHBOX_URL'),
-            'INDEX_NAME': 'documents',
-        },
-    }
-else:
-    HAYSTACK_CONNECTIONS = {
+HAYSTACK_CONNECTIONS = {
         'default': {
             'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-            'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+            'PATH': os.path.join(BASE_DIR, 'organizapp/whoosh_index'),
         },
     }
 
