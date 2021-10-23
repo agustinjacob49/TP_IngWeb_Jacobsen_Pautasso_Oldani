@@ -212,5 +212,3 @@ ENV/
 
 # End of https://www.gitignore.io/api/macos,linux,django,python,pycharm
 *__pycache__
-
-organizapp/db.sqlite3

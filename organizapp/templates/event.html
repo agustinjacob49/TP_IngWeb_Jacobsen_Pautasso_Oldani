@@ -100,51 +100,58 @@
                                     <td class="text-center">{{task.title}}</td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <button type="button" class="btn {%if task.status == 'EN PROGRESO'%}
-                                                            btn-warning
-                                                            {%else%}
-                                                                {%if task.status == 'FINALIZADA'%}
-                                                            btn-success
+                                            {% if task.status == 'POR HACER NO ASIGNADA' %}
+                                                <button type="button" class="btn btn-danger">
+                                                    {{task.status}}
+                                                </button>
+                                            {% else %}
+                                                <button type="button" class="btn {%if task.status == 'EN PROGRESO'%}
+                                                                btn-warning
                                                                 {%else%}
-                                                                    {%if task.status == 'POR HACER ASIGNADA' or task.status == 'POR HACER NO ASIGNADA'%}
-                                                            btn-danger
+                                                                    {%if task.status == 'FINALIZADA'%}
+                                                                btn-success
+                                                                    {%else%}
+                                                                        {%if task.status == 'POR HACER ASIGNADA'%}
+                                                                btn-danger
+                                                                        {%endif%}
                                                                     {%endif%}
-                                                                {%endif%}
-                                                            {%endif%} dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                {{task.status}}
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                            {% for available_status in task.availables_status%}
-                                                <li>
-                                                    <a class="dropdown-item" href="{% url 'update-task-status' task.id available_status %}" >
-                                                        <div id="parent"> 
-                                                            <div id="wide"> 
-                                                             Mover a
-                                                                <span 
-                                                                    role="presentation" 
-                                                                    aria-hidden="true" >
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
-                                                                        <path d="M11.793 5.793a.999.999 0 000 1.414L15.586 11H6a1 1 0 000 2h9.586l-3.793 3.793a.999.999 0 000 1.414c.39.39 1.024.39 1.415 0l5.499-5.5a.997.997 0 00.293-.679v-.057a.996.996 0 00-.293-.678l-5.499-5.5a1 1 0 00-1.415 0z" fill="currentColor" fill-rule="evenodd"></path>
-                                                                        </svg>
-                                                                </span>
-                                                            </div>
-                                                            <span class="badge {%if available_status == 'EN PROGRESO'%}
-                                                            bg-warning text-dark
-                                                            {%else%}
-                                                                {%if available_status == 'FINALIZADA'%}
-                                                            bg-success
+                                                                {%endif%} dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    {{task.status}}
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                {% for available_status in task.availables_status%}
+                                                    <li>
+                                                        <a class="dropdown-item" href="{% url 'update-task-status' task.id available_status %}" >
+                                                            <div id="parent"> 
+                                                                <div id="wide"> 
+                                                                Mover a
+                                                                    <span 
+                                                                        role="presentation" 
+                                                                        aria-hidden="true" >
+                                                                        <svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
+                                                                            <path d="M11.793 5.793a.999.999 0 000 1.414L15.586 11H6a1 1 0 000 2h9.586l-3.793 3.793a.999.999 0 000 1.414c.39.39 1.024.39 1.415 0l5.499-5.5a.997.997 0 00.293-.679v-.057a.996.996 0 00-.293-.678l-5.499-5.5a1 1 0 00-1.415 0z" fill="currentColor" fill-rule="evenodd"></path>
+                                                                            </svg>
+                                                                    </span>
+                                                                </div>
+                                                                <span class="badge {%if available_status == 'EN PROGRESO'%}
+                                                                bg-warning text-dark
                                                                 {%else%}
-                                                                    {%if available_status == 'POR HACER ASIGNADA' or available_status == 'POR HACER NO ASIGNADA'%}
-                                                            bg-danger
+                                                                    {%if available_status == 'FINALIZADA'%}
+                                                                bg-success
+                                                                    {%else%}
+                                                                        {%if available_status == 'POR HACER ASIGNADA' or available_status == 'POR HACER NO ASIGNADA'%}
+                                                                bg-danger
+                                                                        {%endif%}
                                                                     {%endif%}
-                                                                {%endif%}
-                                                            {%endif%}bg-primary">{{available_status}}</span>
-                                                        </div> 
-                                                    </a>
-                                                </li>
-                                                {% endfor %}
-                                            </ul>
+                                                                {%endif%}bg-primary">{{available_status}}</span>
+                                                            </div> 
+                                                        </a>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
                                         </div>
+                                        
                                     </td>
                                     <td class="text-center" name="amount">{{task.cost}}</td>
                                     <td class="text-center" name="total"></td>
