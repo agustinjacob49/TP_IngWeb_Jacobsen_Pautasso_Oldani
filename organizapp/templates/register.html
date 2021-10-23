@@ -55,6 +55,20 @@
                        <button type="submit" id="submit" class="btn btn-black">{% if object %}Guardar cambios{% else %}Registrarse{% endif %}</button>
                    </div>
                </form>
+               <div> 
+                  {% for error in form.username.errors %}
+                     <p class="text-danger">{{ error }}</p>
+                  {% endfor %}
+                  {% for error in form.email.errors %}
+                     <p class="text-danger">{{ error }}</p>
+                  {% endfor %}
+                  {% for error in form.password1.errors %}
+                     <p class="text-danger">{{ error }}</p>
+                  {% endfor %}
+                  {% for error in form.password2.errors %}
+                     <p class="text-danger">{{ error }}</p>
+                  {% endfor %}
+               </div>
             </div>
          </div>
       </div>

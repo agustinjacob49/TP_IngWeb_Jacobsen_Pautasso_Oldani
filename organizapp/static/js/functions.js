@@ -13,3 +13,14 @@ function goEvent(){
         alert("Url invalida");
     }
 }
+
+function joinEvent(eventLink){
+    document.getElementById("event_link").value = `${window.location.origin}/event/${eventLink}`;
+    document.getElementById("form-join-event").submit();
+}
+
+function changeStatus(a, b){
+    document.getElementById("event_link-change-state").value =  window.location.href;
+    document.getElementById("event_link-change-state").value =  window.location.href;
+    alert("Url invalida");
+}
