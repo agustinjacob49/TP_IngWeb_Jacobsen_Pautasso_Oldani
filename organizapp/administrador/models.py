@@ -121,7 +121,8 @@ class Task(models.Model):
     def availables_status(self):
         tabla_switch = {
             'POR HACER ASIGNADA': ['EN PROGRESO', 'FINALIZADA'],
-            'EN PROGRESO': ['POR HACER ASIGNADA', 'FINALIZADA']
+            'EN PROGRESO': ['POR HACER ASIGNADA', 'FINALIZADA'],
+            'FINALIZADA': ['EN PROGRESO', 'POR HACER ASIGNADA'],
         }
         return tabla_switch.get(self.status, "NA")
 
