@@ -213,4 +213,5 @@ ENV/
 # End of https://www.gitignore.io/api/macos,linux,django,python,pycharm
 *__pycache__
 
-organizapp/db.sqlite3
+organizapp/db.sqlite
+organizapp/whoosh_index/*
