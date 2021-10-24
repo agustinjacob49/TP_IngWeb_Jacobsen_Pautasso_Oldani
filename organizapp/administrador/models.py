@@ -11,9 +11,9 @@ STATES_EVENTO = [
     ('suspendido', 'SUSPENDIDO')
 ]
 
-STATES_EVENTO_USUARIO = [
+STATES_USUARIO = [
     ('activo', 'ACTIVO'),
-    ('oculto', 'OCULTO')
+    ('baneado', 'BANEADO')
 ]
 
 STATES_TAREAS = [
@@ -30,7 +30,7 @@ class UserProfile(models.Model):
     key_expires = models.DateTimeField(default=date.today)
     date_start = models.DateTimeField(default=date.today)
     date_end = models.DateTimeField(null=True, blank=True)
-    state = models.CharField(max_length=10, choices=STATES_EVENTO, verbose_name='Estado', null=True)
+    state = models.CharField(max_length=10, choices=STATES_USUARIO, verbose_name='Estado', null=True)
 
     def __str__(self):
         return self.user.username
