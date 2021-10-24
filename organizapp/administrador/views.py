@@ -14,6 +14,7 @@ from .forms import *
 from .models import *
 from django.core.mail import send_mail
 import datetime
+from datetime import date, datetime
 from django.utils import timezone
 from purl import URL
 from django.contrib.auth.views import LoginView
@@ -120,6 +121,9 @@ def AddEvent(request):
             event_instance.event_link = secrets.token_hex(30)
             if event_instance.date_event_start > event_instance.date_event_end:
                 messages.error(request, 'La fecha de inicio del evento no es valida (debe ser anterior a la fecha de finalizacion)')
+                return render(request, 'new-event.html', {'form': form})
+            elif event_instance.date_event_start.date() < datetime.now().date():
+                messages.error(request, 'La fecha de inicio del evento no es valida (debe ser mayor a la fecha y hora del dia de hoy)')
                 return render(request, 'new-event.html', {'form': form})
             else:
                 event_instance.save()
