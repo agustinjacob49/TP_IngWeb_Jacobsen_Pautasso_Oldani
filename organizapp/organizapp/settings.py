@@ -62,7 +62,7 @@ if not os.environ.get('RUNNING_INSIDE_HEROKU', False):
     TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': ['organizapp/templates'],
+            'DIRS': ['./templates'],
             'APP_DIRS': True,
             'OPTIONS': {
                 'context_processors': [
@@ -78,7 +78,7 @@ else:
     TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': ['templates'],
+            'DIRS': ['./templates'],
             'APP_DIRS': True,
             'OPTIONS': {
                 'context_processors': [
