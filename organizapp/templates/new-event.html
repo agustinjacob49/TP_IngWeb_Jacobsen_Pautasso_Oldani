@@ -23,7 +23,11 @@
         <label class="text-black">Localización</label>
         {{form.location}}
         <label class="text-black">Estado</label>
-        {{form.state}}
+        <select name="state" required="" id="id_state">
+            <option value="">---------</option>
+            <option value="activo" selected="">ACTIVO</option>
+            <option value="oculto">OCULTO</option>
+        </select>
         <label class="text-black">Cantidad máxima permitida de invitados</label>
         {{form.max_guests}}
         <label class="text-black">Visibilidad</label>
