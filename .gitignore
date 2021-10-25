@@ -215,3 +215,4 @@ ENV/
 
 organizapp/db.sqlite
 organizapp/whoosh_index/*
+organizapp/db.sqlite3

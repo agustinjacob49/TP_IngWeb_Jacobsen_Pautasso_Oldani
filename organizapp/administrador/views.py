@@ -14,7 +14,6 @@ from .forms import *
 from .models import *
 from django.core.mail import send_mail
 import datetime
-from datetime import date, datetime
 from django.utils import timezone
 from purl import URL
 from django.contrib.auth.views import LoginView
