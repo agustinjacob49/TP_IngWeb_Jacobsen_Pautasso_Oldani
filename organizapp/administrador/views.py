@@ -120,7 +120,7 @@ def AddEvent(request):
             """ le paso el usuario que creo el evento y genero un token para el link"""
             event_instance.owner_id = request.user.id
             event_instance.event_link = secrets.token_hex(30)
-            if event_instance.date_event_start.date() < datetime.now().date():
+            if event_instance.date_event_start.date() <  datetime.date.today():
                 messages.error(request, 'La fecha de inicio del evento no es valida (debe ser mayor a la fecha y hora del dia de hoy)')
                 return render(request, 'new-event.html', {'form': form})
             elif event_instance.date_event_start > event_instance.date_event_end:
