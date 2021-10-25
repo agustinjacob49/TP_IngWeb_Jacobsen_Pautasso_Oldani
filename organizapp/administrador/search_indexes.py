@@ -11,4 +11,4 @@ class EventIndex(indexes.SearchIndex, indexes.Indexable):
 
     def index_queryset(self, using=None):
         """Queremos que se indexen solo los eventos publicos"""
-        return self.get_model().objects.exclude(visibility = "privado")
+        return self.get_model().objects.filter(visibility="publico")
