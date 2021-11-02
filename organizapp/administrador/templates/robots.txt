@@ -1,3 +1,10 @@
 User-Agent: *
-Disallow: /private/
-Disallow: /junk/
+Disallow: /admin
+Disallow: /accounts/confirm/
+Disallow: /delete-event/
+Disallow: /event-down/
+Disallow: /event-up/
+Disallow: /invitation-down/
+Disallow: /invitation-up/
+Disallow: /event/update-task/
+Disallow: /update-task-status/
