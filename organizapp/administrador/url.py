@@ -3,6 +3,7 @@ from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 from .views import *
 from django.contrib.auth.views import LoginView, LogoutView
+from django.views.generic.base import TemplateView
 
 urlpatterns = [
     path('', home, name="home"),
@@ -31,5 +32,6 @@ urlpatterns = [
     path('add_task/<str:token>/', login_required(AddTask), name="add_task"),
     path('event/update-task/<str:token>/<int:task_pk>/', login_required(UpdateTask), name="update_task"),
     path('update-task-status/<int:pk>/<str:status>', login_required(UpdateStatusTask), name="update-task-status"),
+    path( "robots.txt",TemplateView.as_view(template_name="robots.txt", content_type="text/plain"))
 ]
 #+ statics(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
