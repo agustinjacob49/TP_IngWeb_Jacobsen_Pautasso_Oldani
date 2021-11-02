@@ -8,3 +8,5 @@ Disallow: /invitation-down/
 Disallow: /invitation-up/
 Disallow: /event/update-task/
 Disallow: /update-task-status/
+Disallow: /static/
+Disallow: /*.js$
