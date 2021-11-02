@@ -238,6 +238,21 @@ def InvitationUp(request, pk, token):
     event = Event.objects.get(event_link=token)
     return render(request, 'event.html', {'event': event})
 
+
+def ActivateEvent(request, pk):
+    event = Event.objects.get(id=pk)
+    event.state = 'activo'
+    event.save()
+    return render(request, 'event.html', {'event': event})
+
+
+def HideEvent(request, pk):
+    event = Event.objects.get(id=pk)
+    event.state = 'oculto'
+    event.save()
+    return render(request, 'event.html', {'event': event})
+
+
 def UpdateStatusTask(request, pk, status):
     task = Task.objects.get(id=pk)
     task.status = status

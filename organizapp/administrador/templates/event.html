@@ -189,10 +189,15 @@
 
         {% if event.owner == request.user %}
         <a href="{% url 'delete_event' event.event_link %}"><button type="button" class="mx-3 btn btn-danger">Borrar evento</button></a>
+            	{% if event.state == 'activo' %}
+                <a href="{% url 'hide_event' event.id %}"><button type="button" class="mx-3 btn btn-secondary">Ocultar evento</button></a>
+                {% else %}
+                <a href="{% url 'activate_event' event.id %}"><button type="button" class="mx-3 btn btn-success">Activar evento</button></a>
+                {% endif %}
         {% endif %}
         {% if isGuest or event.visibility == 'publico' %}
             <a href="{% url 'invite_user' event.event_link %}">
-                <button type="button" class="mx-3 btn btn-info">Invitar usuarios</button>
+                <button type="button" class="mx-3 btn btn-primary">Invitar usuarios</button>
             </a>
         {% endif %}
         {% if isGuest %}
