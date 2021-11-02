@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'whoosh',
     'haystack',
-    'robots',
     'administrador',
 ]
 
