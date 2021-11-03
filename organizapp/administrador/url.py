@@ -24,6 +24,8 @@ urlpatterns = [
     
     path('activate-event/<int:pk>/', login_required(ActivateEvent), name="activate_event"),
     path('hide-event/<int:pk>/', login_required(HideEvent), name="hide_event"),
+    path('suspender-event/<int:pk>/', login_required(SuspenderEvent), name="suspender_event"),
+    
     
     path('invitation-down/<int:pk>/<str:token>/', login_required(InvitationDown), name="invitation_down"),
     path('invitation-up/<int:pk>/<str:token>/', login_required(InvitationUp), name="invitation_up"),

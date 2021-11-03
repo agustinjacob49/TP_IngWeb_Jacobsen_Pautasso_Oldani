@@ -253,6 +253,13 @@ def HideEvent(request, pk):
     return render(request, 'event.html', {'event': event})
 
 
+def SuspenderEvent(request, pk):
+    event = Event.objects.get(id=pk)
+    event.state = 'suspendido'
+    event.save()
+    return render(request, 'event.html', {'event': event})
+
+
 def UpdateStatusTask(request, pk, status):
     task = Task.objects.get(id=pk)
     task.status = status

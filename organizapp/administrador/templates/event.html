@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+{% if event.state != 'suspendido' %}
 <div class="container py-3 my-3">
     {% if messages %}
         {% for message in messages %}
@@ -10,7 +10,7 @@
             </div>
         {% endfor %}
     {% endif %}
-    {% if isGuest or event.visibility == 'publico' %}
+    {% if isGuest or event.visibility == 'publico' or request.user.is_superuser %}
         <h1>Evento: {{event.name}}</h1>
         <h2>Organizador: {{event.owner}}</h2>
         <h4>Lugar: {{event.location}}</h4>
@@ -194,6 +194,7 @@
                 {% else %}
                 <a href="{% url 'activate_event' event.id %}"><button type="button" class="mx-3 btn btn-success">Activar evento</button></a>
                 {% endif %}
+                <a href="{% url 'suspender_event' event.id %}"><button type="button" class="mx-3 btn btn-dark">Suspender evento</button></a>
         {% endif %}
         {% if isGuest or event.visibility == 'publico' %}
             <a href="{% url 'invite_user' event.event_link %}">
@@ -238,6 +239,14 @@
         </div>
 
 </div>
+{% else %}
+<div class="container">
+    <div class="h1 text-center">
+        El evento ha sido suspendido :(
+    </div>
+    <a href="{% url 'home' %}"><button type="button" class="btn btn-warning" >Ir al inicio</button></a>
+</div>
+{% endif %}
 <script type="text/javascript">
     function getlink() {
         var aux = document.createElement("input");
@@ -283,13 +292,16 @@
         var modalJoin = new bootstrap.Modal(document.getElementById('modal-join'), {});
         
         var isPrivate = ("{{event.visibility}}" !== 'publico');
-        var isGuest = ("{{isGuest}}" === 'True'); ;
+        var isGuest = ("{{isGuest}}" === 'True');
+        var isSuperuser = ("{{request.user.is_superuser}}" === 'True');
 
-        if (isPrivate && !isGuest){
+        if (!isSuperuser && isPrivate && !isGuest){
             modalJoin.toggle();
         }
-
-        document.getElementById('link_event').innerHTML = `${window.location.origin}/event/{{event.event_link}}`;
+        if (document.getElementById('link_event') != null){
+            document.getElementById('link_event').innerHTML = `${window.location.origin}/event/{{event.event_link}}`;
+        }
+        
         
     };
 </script>
