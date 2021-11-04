@@ -1,16 +1,16 @@
-FROM python:3.8.5
-
-RUN pip install --upgrade pip
+FROM python:3.9.6
 
 RUN mkdir /app_grupo3
 WORKDIR /app_grupo3
 
-COPY . /app_grupo3
+COPY requirements.txt /app_grupo3/
 
 RUN pip install -r requirements.txt
 
-ENV EN_DOCKER=True
+COPY . /app_grupo3/
 
-RUN mkdir /data
+ENV RUNNING_IN_DOCKER = True
 
-CMD ["python" , "organizapp/manage.py" , "runserver" , "0.0.0.0:8000"]
+RUN mkdir /app_grupo3/data
+
+CMD ["python", "organizapp/manage.py", "runserver", "0.0.0.0:8000"]
